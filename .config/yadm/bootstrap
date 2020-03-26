@@ -1,0 +1,22 @@
+#!/bin/sh
+
+echo "Updating the yadm repo origin URL"
+yadm remote set-url origin "git@github.com:StollD/dotfiles.git"
+
+cd "$HOME"
+
+echo "Init submodules"
+yadm submodule update --recursive --init
+
+echo "Installing spicetify"
+spicetify-update
+systemctl --user enable --now spicetify-update.timer
+
+echo "Installing proton"
+proton-update
+systemctl --user enable --now proton-update.timer
+
+echo "Installing SpaceVim dependencies"
+pkcon install npm clang-tools-extra
+pkcon install python3-devel python3-flake8 python3-yapf python3-isort
+
