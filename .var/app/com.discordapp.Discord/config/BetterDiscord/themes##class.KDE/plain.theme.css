@@ -1,0 +1,19 @@
+//META{"name":"Plain","description":"Configurable discord theme using only two colors.","author":"Dorian Stoll","version":"1.0.0"}*//{}
+
+@import url('https://raw.githack.com/Customa/Customa/master/Base/base.m.css');
+@import url('https://raw.githack.com/Customa/Customa/master/Base/selection.m.css');
+@import url('https://raw.githack.com/Customa/Customa/master/Base/tooltip.m.css');
+@import url('https://raw.githack.com/Customa/Customa/master/Chat/betterBlock.m.css');
+@import url('https://raw.githack.com/Customa/Customa/master/Chat/channelDivider.m.css');
+@import url('https://raw.githack.com/Customa/Customa/master/Chat/codeBlockLanguages.m.css');
+@import url('https://raw.githack.com/Customa/Customa/master/Chat/newDividerRed.m.css');
+@import url('https://raw.githack.com/Customa/Customa/master/Chat/newEditIcon.m.css');
+@import url('https://raw.githack.com/Customa/Customa/master/Misc/iOSToggles.m.css');
+@import url('https://raw.githack.com/Customa/Customa/master/Sidebar/newPlaying.m.css');
+@import url('https://raw.githack.com/Customa/Customa/master/Sidebar/statusCircles.m.css');
+@import url('https://gist.githack.com/StollD/1eae41f38bb6cacd34d72e0c0f00a53e/raw/customa-plain-mod.css');
+
+:root {
+    --bgcolor: #31363b;
+    --fgcolor: #3daee9;
+}

@@ -1,0 +1,10 @@
+[Unit]
+Description=Spicetify Updater
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/spicetify-update
+RemainAfterExit=no
+
+[Install]
+WantedBy=default.target

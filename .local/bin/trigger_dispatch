@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+# Usage: ./trigger_dispatch.sh <org>/<repo> <user> <user-access-token>
+
+repo="${1}"
+user="${2}"
+token="${3}"
+
+curl --verbose -X POST -u "${user}:${token}" \
+    -H "Content-Type: application/json" \
+    "https://api.github.com/repos/${repo}/dispatches" \
+    --data '{"event_type": "repository_dispatch"}'

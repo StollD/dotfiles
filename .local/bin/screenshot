@@ -1,0 +1,7 @@
+#!/bin/sh
+
+DIR=$(dirname "$0")
+TEMP=$(mktemp)
+
+spectacle --region --background --output $TEMP
+$DIR/imgurbash2 --login $TEMP

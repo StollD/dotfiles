@@ -1,0 +1,8 @@
+#!/bin/sh
+
+KERNEL="$1"
+
+git tag -f debian-$KERNEL
+git tag -f arch-$KERNEL
+git tag -f fedora-30-$KERNEL
+git tag -f fedora-31-$KERNEL

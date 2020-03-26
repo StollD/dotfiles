@@ -1,0 +1,8 @@
+.var/app/com.discordapp.Discord/config/BetterDiscord/emote_data.json
+.var/app/com.discordapp.Discord/config/BetterDiscord/logs.log
+.var/app/com.discordapp.Discord/config/BetterDiscord/plugins/*.json
+
+# Make sure that we don't commit the symlink for alternative files
+.config/alacritty/alacritty.yml
+.var/app/com.discordapp.Discord/config/BetterDiscord/themes
+.config/spicetify/Themes/tmsp/color.ini

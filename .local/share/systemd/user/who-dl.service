@@ -1,0 +1,10 @@
+[Unit]
+Description=Doctor Who Episode Scraper
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/who-dl
+RemainAfterExit=no
+
+[Install]
+WantedBy=default.target

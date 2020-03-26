@@ -1,0 +1,13 @@
+{
+    "settings": {
+        "doubleClick": true,
+        "dldir": "/home/dorian/Downloads/Discord",
+        "autoopen": true,
+        "showinstead": false,
+        "overwrite": false,
+        "prompt": false,
+        "imagemodals": true,
+        "copyimages": false,
+        "itp": true
+    }
+}

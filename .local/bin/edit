@@ -1,0 +1,40 @@
+#!/bin/sh
+
+PROG=$(basename $0)
+MODE="$PROG"
+if [ "$MODE" = "edit" ]; then
+	MODE="eg"
+fi
+
+usage() {
+	echo "Usage: $0 [OPTION]..."
+	echo
+	echo "Options:"
+	echo "	-h	This help message"
+	echo "	-g	Opens a list of files in a GUI editor"
+	echo "	-s	Opens a list of files in a terminal editor"
+	exit
+}
+
+while getopts ":h:g:s:" args; do
+	case "$args" in
+	s)
+		MODE="es"
+		;;
+	g)
+		MODE="eg"
+		;;
+	h|*)
+		usage
+		;;
+	esac
+done
+shift $((OPTIND-1))
+
+if [ "$MODE" = "eg" ]; then
+	$VISUAL $@ &
+fi
+
+if [ "$MODE" = "es" ]; then
+	$EDITOR $@
+fi
