@@ -34,8 +34,8 @@ filemanager = 'defx'
 disabled_plugins = ['deoplete-go']
 
 # Custom vimscript options 
-bootstrap_before = 'config#apply'
-bootstrap_after = 'config#apply'
+bootstrap_before = 'user#apply'
+bootstrap_after = 'user#apply'
 
 [[layers]]
 name = 'autocomplete'

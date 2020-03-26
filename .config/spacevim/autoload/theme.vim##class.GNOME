@@ -1,0 +1,3 @@
+function! theme#apply() abort
+  let g:neodark#background='#353535'
+endfunction
