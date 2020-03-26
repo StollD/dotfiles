@@ -17,6 +17,5 @@ proton-update
 systemctl --user enable --now proton-update.timer
 
 echo "Installing SpaceVim dependencies"
-pkcon install npm clang-tools-extra
-pkcon install python3-devel python3-flake8 python3-yapf python3-isort
-
+sudo dnf install npm clang-tools-extra
+sudo dnf install python3-devel python3-flake8 python3-yapf python3-isort
