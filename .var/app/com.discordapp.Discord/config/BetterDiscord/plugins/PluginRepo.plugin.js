@@ -69,7 +69,7 @@ var PluginRepo = (_ => {
 	return class PluginRepo {
 		getName () {return "PluginRepo";} 
 
-		getVersion () {return "1.9.4";}
+		getVersion () {return "1.9.6";}
 
 		getAuthor () {return "DevilBro";}
 
@@ -118,9 +118,9 @@ var PluginRepo = (_ => {
 			if (!window.BDFDB || typeof BDFDB != "object" || !BDFDB.loaded || !this.started) return;
 			let settings = BDFDB.DataUtils.get(this, "settings");
 			let customList = this.getCustomList(), customUrl = "";
-			let settingspanel, settingsitems = [];
+			let settingsPanel, settingsItems = [];
 			
-			settingsitems.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.CollapseContainer, {
+			settingsItems.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.CollapseContainer, {
 				title: "Settings",
 				collapseStates: collapseStates,
 				children: Object.keys(settings).map(key => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SettingsSaveItem, {
@@ -132,7 +132,7 @@ var PluginRepo = (_ => {
 					value: settings[key]
 				}))
 			}));
-			settingsitems.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.CollapseContainer, {
+			settingsItems.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.CollapseContainer, {
 				title: "Custom Plugins",
 				collapseStates: collapseStates,
 				dividertop: true,
@@ -156,7 +156,7 @@ var PluginRepo = (_ => {
 										if (customUrl) {
 											customList.push(customUrl);
 											BDFDB.DataUtils.save(BDFDB.ArrayUtils.removeCopies(customList), this, "custom");
-											BDFDB.PluginUtils.refreshSettingsPanel(this, settingspanel, collapseStates);
+											BDFDB.PluginUtils.refreshSettingsPanel(this, settingsPanel, collapseStates);
 										}
 									},
 									children: BDFDB.LanguageUtils.LanguageStrings.ADD
@@ -174,7 +174,7 @@ var PluginRepo = (_ => {
 							onRemove: _ => {
 								BDFDB.ArrayUtils.remove(customList, url, true);
 								BDFDB.DataUtils.save(customList, this, "custom");
-								BDFDB.PluginUtils.refreshSettingsPanel(this, settingspanel, collapseStates);
+								BDFDB.PluginUtils.refreshSettingsPanel(this, settingsPanel, collapseStates);
 							}
 						}))
 					}) : null,
@@ -185,14 +185,14 @@ var PluginRepo = (_ => {
 						onClick: _ => {
 							BDFDB.ModalUtils.confirm(this, "Are you sure you want to remove all added Plugins from your own list", _ => {
 								BDFDB.DataUtils.save([], this, "custom");
-								BDFDB.PluginUtils.refreshSettingsPanel(this, settingspanel, collapseStates);
+								BDFDB.PluginUtils.refreshSettingsPanel(this, settingsPanel, collapseStates);
 							});
 						},
 						children: BDFDB.LanguageUtils.LanguageStrings.REMOVE
 					})
 				].flat(10).filter(n => n)
 			}));
-			settingsitems.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.CollapseContainer, {
+			settingsItems.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.CollapseContainer, {
 				title: "Refetch All",
 				collapseStates: collapseStates,
 				dividertop: true,
@@ -207,7 +207,7 @@ var PluginRepo = (_ => {
 				})
 			}));
 			
-			return settingspanel = BDFDB.PluginUtils.createSettingsPanel(this, settingsitems);
+			return settingsPanel = BDFDB.PluginUtils.createSettingsPanel(this, settingsItems);
 		}
 
 		//legacy
@@ -238,13 +238,6 @@ var PluginRepo = (_ => {
 			if (window.BDFDB && typeof BDFDB === "object" && BDFDB.loaded) {
 				if (this.started) return;
 				BDFDB.PluginUtils.init(this);
-				
-				// REMOVE 10.02.2020
-				let olddata = BDFDB.DataUtils.load(this, "ownlist", "ownlist");
-				if (olddata) {
-					BDFDB.DataUtils.save(olddata, this, "custom");
-					BDFDB.DataUtils.remove(this, "ownlist");
-				}
 
 				this.loadPlugins();
 
@@ -485,7 +478,7 @@ var PluginRepo = (_ => {
 							text: BDFDB.LanguageUtils.LanguageStrings.NEW
 						}),
 						BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.FavButton, {
-							className: BDFDB.disCNS._repoentryiconwrapper + BDFDB.disCN.cursorpointer,
+							className: BDFDB.disCN._repocontrolsbutton,
 							isFavorite: plugin.fav == favStates.FAVORIZED,
 							onClick: value => {
 								plugin.fav = value ? favStates.FAVORIZED : favStates.NOT_FAVORIZED;
@@ -493,44 +486,45 @@ var PluginRepo = (_ => {
 								else BDFDB.DataUtils.remove(this, "favorites", plugin.url);
 							}
 						}),
-						BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.TooltipContainer, {
-							text: "Go to Source",
-							children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
-								className: BDFDB.disCNS._repoentryiconwrapper,
-								onClick: _ => {
-									let giturl = null;
-									if (plugin.url.indexOf("https://raw.githubusercontent.com") == 0) {
-										let temp = plugin.url.replace("//raw.githubusercontent", "//github").split("/");
-										temp.splice(5, 0, "blob");
-										giturl = temp.join("/");
-									}
-									else if (plugin.url.indexOf("https://gist.githubusercontent.com/") == 0) {
-										giturl = plugin.url.replace("//gist.githubusercontent", "//gist.github").split("/raw/")[0];
-									}
-									if (giturl) BDFDB.DiscordUtils.openLink(giturl, BDFDB.DataUtils.get(this, "settings", "useChromium"));
-								},
+						BDFDB.ReactUtils.createElement("div", {
+							className: BDFDB.disCN._repocontrolsbutton,
+							children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.TooltipContainer, {
+								text: "Go to Source",
 								children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
-									name: BDFDB.LibraryComponents.SvgIcon.Names.GITHUB
+									name: BDFDB.LibraryComponents.SvgIcon.Names.GITHUB,
+									className: BDFDB.disCN._repoicon,
+									onClick: _ => {
+										let giturl = null;
+										if (plugin.url.indexOf("https://raw.githubusercontent.com") == 0) {
+											let temp = plugin.url.replace("//raw.githubusercontent", "//github").split("/");
+											temp.splice(5, 0, "blob");
+											giturl = temp.join("/");
+										}
+										else if (plugin.url.indexOf("https://gist.githubusercontent.com/") == 0) {
+											giturl = plugin.url.replace("//gist.githubusercontent", "//gist.github").split("/raw/")[0];
+										}
+										if (giturl) BDFDB.DiscordUtils.openLink(giturl, BDFDB.DataUtils.get(this, "settings", "useChromium"));
+									}
 								})
 							})
-						})
+						}),
 					],
 					buttons: [
-						plugin.state != pluginStates.DOWNLOADABLE && BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.TooltipContainer, {
-							text: "Delete Pluginfile",
-							children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
-								className: BDFDB.disCN._repoentryiconwrapper,
+						plugin.state != pluginStates.DOWNLOADABLE && BDFDB.ReactUtils.createElement("div", {
+							className: BDFDB.disCN._repocontrolsbutton,
+							children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.TooltipContainer, {
+								text: "Delete Pluginfile",
 								children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
-									className: BDFDB.disCN.svgicon,
-									name: BDFDB.LibraryComponents.SvgIcon.Names.NOVA_TRASH
-								}),
-								onClick: (e, instance) => {
-									this.deletePluginFile(plugin);
-									BDFDB.TimeUtils.timeout(_ => {
-										this.updateList(instance, options);
-										if (!BDFDB.BDUtils.isAutoLoadEnabled()) this.stopPlugin(plugin);
-									}, 3000);
-								}
+									name: BDFDB.LibraryComponents.SvgIcon.Names.NOVA_TRASH,
+									className: BDFDB.disCN._repoicon,
+									onClick: (e, instance) => {
+										this.deletePluginFile(plugin);
+										BDFDB.TimeUtils.timeout(_ => {
+											this.updateList(instance, options);
+											if (!BDFDB.BDUtils.isAutoLoadEnabled()) this.stopPlugin(plugin);
+										}, 3000);
+									}
+								})
 							})
 						}),
 						BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Button, {
@@ -555,7 +549,7 @@ var PluginRepo = (_ => {
 			BDFDB.DOMUtils.remove("iframe.discordSandbox", ".pluginrepo-loadingicon");
 			let settings = BDFDB.DataUtils.load(this, "settings");
 			let getPluginInfo, extractConfigInfo, createFrame, runInFrame;
-			let frame, framerunning = false, framequeue = [], outdated = 0, newentries = 0, i = 0;
+			let frame, frameRunning = false, frameQueue = [], outdated = 0, newentries = 0, i = 0;
 			let tags = ["getName", "getVersion", "getAuthor", "getDescription"];
 			let seps = ["\"", "\'", "\`"];
 			let newentriesdata = BDFDB.DataUtils.load(this, "newentriesdata"), customList = this.getCustomList();
@@ -598,7 +592,7 @@ var PluginRepo = (_ => {
 								return;
 							}
 							let finishCounter = 0, finishInterval = BDFDB.TimeUtils.interval(_ => { 
-								if ((framequeue.length == 0 && !framerunning) || finishCounter > 300 || !loading.is) {
+								if ((frameQueue.length == 0 && !frameRunning) || finishCounter > 300 || !loading.is) {
 									BDFDB.TimeUtils.clear(loading.timeout);
 									BDFDB.TimeUtils.clear(finishInterval);
 									BDFDB.DOMUtils.remove(frame, loadingicon, ".pluginrepo-loadingicon");
@@ -681,14 +675,23 @@ var PluginRepo = (_ => {
 							/* code is minified -> add newlines */
 							bodyCopy = body.replace(/}/g, "}\n");
 						}
-						let bodyWithoutSpecial = bodyCopy.replace(/\n|\r|\t/g, "");
-						let configreg = /(\.exports|config)\s*=\s*\{["'`]*info["'`]*\s*:\s*/i.exec(bodyWithoutSpecial);
-						if (url != "https://raw.githubusercontent.com/mwittrien/BetterDiscordAddons/master/Plugins/PluginRepo/PluginRepo.plugin.js" && configreg) {
+						let bodyWithoutSpecial = bodyCopy.replace(/\n|\r|\t/g, "").replace(/\n|\r|\t/g, "");
+						let configReg = /(\.exports|config)\s*=\s*\{\s*["'`]*info["'`]*\s*:\s*/i.exec(bodyWithoutSpecial);
+						if (url != "https://raw.githubusercontent.com/mwittrien/BetterDiscordAddons/master/Plugins/PluginRepo/PluginRepo.plugin.js" && configReg) {
 							try {
-								extractConfigInfo(plugin, JSON.parse('{"info":' + bodyWithoutSpecial.substring(configreg.index).split(configreg[0])[1].split("};")[0].split("}},")[0] + '}'));
+								extractConfigInfo(plugin, JSON.parse('{"info":' + bodyWithoutSpecial.substring(configReg.index).split(configReg[0])[1].split("};")[0].split("}},")[0] + '}'));
 							}
 							catch (err) {
-								try {extractConfigInfo(plugin, JSON.parse(('{"info":' + bodyWithoutSpecial.substring(configreg.index).split(configreg[0])[1].split("};")[0].split("}},")[0] + '}').replace(/,/g, ',"').replace(/:/g, '":').replace(/{/g, '{"').replace(/""/g, '"').replace(/" /g, ' ').replace(/,"{/g, ',{').replace(/,"\[/g, ',[').replace(/":\/\//g, ':\/\/')));}
+								try {
+									let i = 0, j = 0, configString = "";
+									for (let c of (bodyWithoutSpecial.substring(configReg.index).split(configReg[0])[1].split("};")[0].split("}},")[0]).replace(/,/g, ',"').replace(/:/g, '":').replace(/{/g, '{"').replace(/""/g, '"').replace(/" /g, ' ').replace(/,"{/g, ',{').replace(/,"\[/g, ',[').replace(/":\/\//g, ':\/\/')) {
+										configString += c;
+										if (c == "{") i++;
+										else if (c == "}") j++;
+										if (i > 0 && i == j) break;
+									}
+									extractConfigInfo(plugin, JSON.parse('{"info":' + configString + '}'));
+								}
 								catch (err2) {}
 							}
 						}
@@ -715,16 +718,16 @@ var PluginRepo = (_ => {
 							if (!cachedPlugins.includes(url)) newentries++;
 						}
 						else if (frame && frame.contentWindow) {
-							framequeue.push({body, url});
+							frameQueue.push({body, url});
 							runInFrame();
 						}
 					}
 					i++;
 					
-					let loadingtooltip = document.querySelector(".pluginrepo-loading-tooltip");
-					if (loadingtooltip) {
-						BDFDB.DOMUtils.setText(loadingtooltip, this.getLoadingTooltipText());
-						BDFDB.TooltipUtils.update(loadingtooltip);
+					let loadingTooltip = document.querySelector(".pluginrepo-loading-tooltip");
+					if (loadingTooltip) {
+						BDFDB.DOMUtils.setText(loadingTooltip, this.getLoadingTooltipText());
+						loadingTooltip.update();
 					}
 					
 					getPluginInfo(callback);
@@ -774,14 +777,14 @@ var PluginRepo = (_ => {
 			}
 
 			runInFrame = _ => {
-				if (framerunning) return;
-				let framedata = framequeue.shift();
-				if (!framedata) return;
-				framerunning = true;
-				let {body, url} = framedata;
-				let name = body.replace(/\s*:\s*/g, ":").split('"name":"');
-				if (name.length > 1) {
-					name = name[1].split('"')[0];
+				if (frameRunning) return;
+				let frameData = frameQueue.shift();
+				if (!frameData) return;
+				let {body, url} = frameData;
+				let name = (body.replace(/\s*:\s*/g, ":").split('"name":"')[1] || "").split('"')[0];
+				name = name ? name : (body.replace(/ {2,}/g, " ").replace(/\r/g, "").split("@name ")[1] || "").split("\n")[0];
+				if (name) {
+					frameRunning = true;
 					let processResult = plugin => {
 						if (BDFDB.ObjectUtils.is(plugin)) {
 							plugin.url = url;
@@ -789,7 +792,7 @@ var PluginRepo = (_ => {
 							if (this.isPluginOutdated(plugin, url)) outdated++;
 							if (!cachedPlugins.includes(url)) newentries++;
 						}
-						framerunning = false;
+						frameRunning = false;
 						runInFrame();
 					};
 					let evalResultReceived = e => {
@@ -805,9 +808,9 @@ var PluginRepo = (_ => {
 					window.addEventListener("message", evalResultReceived);
 					if (frame.contentWindow) frame.contentWindow.postMessage({origin:"PluginRepo",reason:"Eval",jsstring:`
 						try {
-							${body}
-							var p = new ${name}();
-							var data = {
+							${body};
+							let p = new ${name}();
+							let data = {
 								"getName":getString(p.getName()),
 								"getAuthor":getString(p.getAuthor()),
 								"getVersion":getString(p.getVersion()),

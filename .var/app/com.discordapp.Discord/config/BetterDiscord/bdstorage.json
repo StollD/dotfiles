@@ -32,7 +32,8 @@
                 "fork-es-3": false,
                 "fork-wp-1": false,
                 "fork-wp-2": false,
-                "fork-beta": true
+                "fork-beta": true,
+                "reactDevTools": false
             },
             "plugins": {
                 "AntiGhostPing": true,
@@ -45,7 +46,7 @@
                 "Citador": false,
                 "Clear-Input-on-Escape": true,
                 "Copy Code Plugin": false,
-                "Direct-Download": true,
+                "Direct-Download": false,
                 "DoNotTrack": true,
                 "ImageGallery": false,
                 "Line Numbers": false,
@@ -73,7 +74,7 @@
         "canary": {},
         "ptb": {}
     },
-    "version": "0.2.25",
+    "version": "0.3.2",
     "emoteCacheDays": 7,
-    "emoteCacheDate": "2020-03-26T01:18:52.475Z"
+    "emoteCacheDate": "2020-04-07T10:02:39.382Z"
 }
