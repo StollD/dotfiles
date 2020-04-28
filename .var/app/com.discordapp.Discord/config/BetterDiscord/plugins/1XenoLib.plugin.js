@@ -41,7 +41,7 @@ var XenoLib = (() => {
           twitter_username: ''
         }
       ],
-      version: '1.3.16',
+      version: '1.3.18',
       description: 'Simple library to complement plugins with shared code without lowering performance.',
       github: 'https://github.com/1Lighty',
       github_raw: 'https://raw.githubusercontent.com/1Lighty/BetterDiscordPlugins/master/Plugins/1XenoLib.plugin.js'
@@ -50,7 +50,7 @@ var XenoLib = (() => {
       {
         title: 'Boring changes',
         type: 'fixed',
-        items: ['Removed usage of soon to be deprecated globals.', 'Fixed random notification bounce, again. For real this time.', 'Fixed oversized close button on notifications.', 'Changed right click behavior of the close button on notifications to just close all notifications outright. Left click still only closes 1.']
+        items: ['Fixed notifications not working.', 'Fixed parser error.']
       }
     ],
     defaultConfig: [
@@ -74,7 +74,7 @@ var XenoLib = (() => {
             value: true
           },
           {
-            name: 'Backdrop color',
+            name: 'Background color',
             id: 'backdropColor',
             type: 'color',
             value: '#3e4346',
@@ -96,7 +96,7 @@ var XenoLib = (() => {
   /* Build */
   const buildPlugin = ([Plugin, Api]) => {
     const { ContextMenu, EmulatedTooltip, Toasts, Settings, Popouts, Modals, Utilities, WebpackModules, Filters, DiscordModules, ColorConverter, DOMTools, DiscordClasses, DiscordSelectors, ReactTools, ReactComponents, DiscordAPI, Logger, Patcher, PluginUpdater, PluginUtilities, DiscordClassModules, Structs } = Api;
-    const { React, ModalStack, ContextMenuActions, ContextMenuItem, ContextMenuItemsGroup, ReactDOM, ChannelStore, GuildStore, UserStore, DiscordConstants, Dispatcher, GuildMemberStore, GuildActions, PrivateChannelActions, LayerManager, InviteActions, TextElement, FlexChild, Titles, Changelog: ChangelogModal } = DiscordModules;
+    const { React, ModalStack, ContextMenuActions, ContextMenuItem, ContextMenuItemsGroup, ReactDOM, ChannelStore, GuildStore, UserStore, DiscordConstants, Dispatcher, GuildMemberStore, GuildActions, PrivateChannelActions, LayerManager, InviteActions, FlexChild, Titles, Changelog: ChangelogModal } = DiscordModules;
 
     let CancelledAsync = false;
     const DefaultLibrarySettings = {};
@@ -563,11 +563,13 @@ var XenoLib = (() => {
       Logger.stacktrace('Failed to patch V2C_*Card or AddonCard (BBD rewrite)', e);
     }
 
+    const TextElement = WebpackModules.getByDisplayName('Text');
+
     /* shared between FilePicker and ColorPicker */
     const MultiInputClassname = XenoLib.joinClassNames(Utilities.getNestedProp(DiscordClasses, 'BasicInputs.input.value'), XenoLib.getClass('multiInput'));
     const MultiInputFirstClassname = XenoLib.getClass('multiInputFirst');
     const MultiInputFieldClassname = XenoLib.getClass('multiInputField');
-    const ErrorMessageClassname = XenoLib.joinClassNames('xenoLib-error-text', XenoLib.getClass('errorMessage'), Utilities.getNestedProp(TextElement, 'Colors.RED'));
+    const ErrorMessageClassname = XenoLib.joinClassNames('xenoLib-error-text', XenoLib.getClass('errorMessage'), Utilities.getNestedProp(TextElement, 'Colors.ERROR'));
     const ErrorClassname = XenoLib.getClass('input error');
 
     try {
@@ -852,7 +854,7 @@ var XenoLib = (() => {
     const FancyParser = (() => {
       const ParsersModule = WebpackModules.getByProps('parseAllowLinks', 'parse');
       try {
-        const DeepClone = WebpackModules.getByRegex(/function\(\w\)\{var \w=\{\},\w=\w,\w=Array\.isArray\(\w\),\w=0;for\(\w=\w\?\w:\w\[Symbol\.iterator\]\(\);;\)\{var \w;if\(\w\)\{\w/);
+        const DeepClone = WebpackModules.getByString('/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(');
         const ReactParserRules = WebpackModules.getByRegex(/function\(\){return \w}$/);
         const FANCY_PANTS_PARSER_RULES = DeepClone([WebpackModules.getByProps('RULES', 'ALLOW_LINKS_RULES').ALLOW_LINKS_RULES, ReactParserRules()]);
         FANCY_PANTS_PARSER_RULES.image = WebpackModules.getByProps('defaultParse').defaultRules.image;
@@ -936,7 +938,7 @@ var XenoLib = (() => {
         }
       }
       const renderFooter = () => ['Need support? ', React.createElement('a', { className: XenoLib.joinClassNames(AnchorClasses.anchor, AnchorClasses.anchorUnderlineOnHover), onClick: () => (LayerManager.popLayer(), ModalStack.pop(), InviteActions.acceptInviteAndTransitionToInviteChannel('NYvWdN5')) }, 'Join my support server'), FancyParser('! Or consider donating via [Paypal](https://paypal.me/lighty13), [Ko-fi](https://ko-fi.com/lighty_) or [Patreon](https://www.patreon.com/lightyp)!')];
-      ModalStack.push(props => React.createElement(XenoLib.ReactComponents.ErrorBoundary, { label: 'Changelog', onError: () => props.onClose() }, React.createElement(ChangelogModal, { className: ChangelogClasses.container, selectable: true, onScroll: _ => _, onClose: _ => _, renderHeader: () => React.createElement(FlexChild.Child, { grow: 1, shrink: 1 }, React.createElement(Titles.default, { tag: Titles.Tags.H4 }, title), React.createElement(TextElement.default, { size: TextElement.Sizes.SMALL, color: TextElement.Colors.PRIMARY, className: ChangelogClasses.date }, `Version ${version}`)), renderFooter: () => React.createElement(FlexChild.Child, { gro: 1, shrink: 1 }, React.createElement(TextElement.default, { size: TextElement.Sizes.SMALL, color: TextElement.Colors.PRIMARY }, footer ? (typeof footer === 'string' ? FancyParser(footer) : footer) : renderFooter())), children: items, ...props })));
+      ModalStack.push(props => React.createElement(XenoLib.ReactComponents.ErrorBoundary, { label: 'Changelog', onError: () => props.onClose() }, React.createElement(ChangelogModal, { className: ChangelogClasses.container, selectable: true, onScroll: _ => _, onClose: _ => _, renderHeader: () => React.createElement(FlexChild.Child, { grow: 1, shrink: 1 }, React.createElement(Titles.default, { tag: Titles.Tags.H4 }, title), React.createElement(TextElement, { size: TextElement.Sizes.SIZE_12, className: ChangelogClasses.date }, `Version ${version}`)), renderFooter: () => React.createElement(FlexChild.Child, { gro: 1, shrink: 1 }, React.createElement(TextElement, { size: TextElement.Sizes.SIZE_12 }, footer ? (typeof footer === 'string' ? FancyParser(footer) : footer) : renderFooter())), children: items, ...props })));
     };
 
     /* NOTIFICATIONS START */
@@ -970,7 +972,98 @@ var XenoLib = (() => {
         }
         return true;
       };
-      const zustand = WebpackModules.getByRegex(/\w\(function\(\){return \w\(\w\)},\[\]\),\w\?\w:\w\.currentSlice},\w\]}/);
+      /* https://github.com/react-spring/zustand
+       * MIT License
+       *
+       * Copyright (c) 2019 Paul Henschel
+       *
+       * Permission is hereby granted, free of charge, to any person obtaining a copy
+       * of this software and associated documentation files (the "Software"), to deal
+       * in the Software without restriction, including without limitation the rights
+       * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+       * copies of the Software, and to permit persons to whom the Software is
+       * furnished to do so, subject to the following conditions:
+       *
+       * The above copyright notice and this permission notice shall be included in all
+       * copies or substantial portions of the Software.
+       *
+       * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+       * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+       * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+       * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+       * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+       * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+       * SOFTWARE.
+       */
+      function zustand(createState) {
+        var state;
+        var listeners = new Set();
+        const setState = partial => {
+          var partialState = typeof partial === 'function' ? partial(state) : partial;
+          if (partialState !== state) {
+            state = Object.assign({}, state, partialState);
+            listeners.forEach(function (listener) {
+              return listener();
+            });
+          }
+        };
+        const getState = () => state;
+        const getSubscriber = (listener, selector, equalityFn) => {
+          if (selector === void 0) selector = getState;
+          if (equalityFn === void 0) equalityFn = Object.is;
+          return { currentSlice: selector(state), equalityFn: equalityFn, errored: false, listener: listener, selector: selector, unsubscribe: function unsubscribe() {} };
+        };
+        var subscribe = function subscribe(subscriber) {
+          function listener() {
+            // Selector or equality function could throw but we don't want to stop
+            // the listener from being called.
+            // https://github.com/react-spring/zustand/pull/37
+            try {
+              var newStateSlice = subscriber.selector(state);
+              if (!subscriber.equalityFn(subscriber.currentSlice, newStateSlice)) subscriber.listener((subscriber.currentSlice = newStateSlice));
+            } catch (error) {
+              subscriber.errored = true;
+              subscriber.listener(null, error);
+            }
+          }
+
+          listeners.add(listener);
+          return () => listeners.delete(listener);
+        };
+        const apiSubscribe = (listener, selector, equalityFn) => subscribe(getSubscriber(listener, selector, equalityFn));
+        const destroy = () => listeners.clear();
+        const useStore = (selector, equalityFn) => {
+          if (selector === void 0) selector = getState;
+          if (equalityFn === void 0) equalityFn = Object.is;
+          var forceUpdate = React.useReducer(c => c + 1, 0)[1];
+          var subscriberRef = React.useRef();
+          if (!subscriberRef.current) {
+            subscriberRef.current = getSubscriber(forceUpdate, selector, equalityFn);
+            subscriberRef.current.unsubscribe = subscribe(subscriberRef.current);
+          }
+          var subscriber = subscriberRef.current;
+          var newStateSlice;
+          var hasNewStateSlice = false; // The selector or equalityFn need to be called during the render phase if
+          // they change. We also want legitimate errors to be visible so we re-run
+          // them if they errored in the subscriber.
+          if (subscriber.selector !== selector || subscriber.equalityFn !== equalityFn || subscriber.errored) {
+            // Using local variables to avoid mutations in the render phase.
+            newStateSlice = selector(state);
+            hasNewStateSlice = !equalityFn(subscriber.currentSlice, newStateSlice);
+          } // Syncing changes in useEffect.
+          React.useLayoutEffect(function () {
+            if (hasNewStateSlice) subscriber.currentSlice = newStateSlice;
+            subscriber.selector = selector;
+            subscriber.equalityFn = equalityFn;
+            subscriber.errored = false;
+          });
+          React.useLayoutEffect(() => subscriber.unsubscribe, []);
+          return hasNewStateSlice ? newStateSlice : subscriber.currentSlice;
+        };
+        const api = { setState: setState, getState: getState, subscribe: apiSubscribe, destroy: destroy };
+        state = createState(setState, getState, api);
+        return [useStore, api];
+      }
       const [useStore, api] = zustand(e => ({ data: [] }));
       const defaultOptions = {
         loading: false,
@@ -1313,13 +1406,11 @@ var XenoLib = (() => {
                     'div',
                     {
                       className: 'xenoLib-notification-content',
-                      style: LibrarySettings.notifications.backdrop
-                        ? {
-                            backdropFilter: 'blur(5px)',
-                            background: ColorConverter.int2rgba(ColorConverter.hex2int(LibrarySettings.notifications.backdropColor), 0.3),
-                            border: 'none'
-                          }
-                        : undefined,
+                      style: {
+                        backdropFilter: LibrarySettings.notifications.backdrop ? 'blur(5px)' : undefined,
+                        background: ColorConverter.int2rgba(ColorConverter.hex2int(LibrarySettings.notifications.backdropColor), LibrarySettings.notifications.backdrop ? 0.3 : 1.0),
+                        border: LibrarySettings.notifications.backdrop ? 'none' : undefined
+                      },
                       ref: e => {
                         if (!LibrarySettings.notifications.backdrop || !e) return;
                         e.style.setProperty('backdrop-filter', e.style.backdropFilter, 'important');
@@ -1601,7 +1692,7 @@ var XenoLib = (() => {
             c = ZeresPluginLibraryOutdated ? 'Outdated Library' : 'Missing Library',
             d = `The Library ZeresPluginLibrary required for ${this.name} is ${ZeresPluginLibraryOutdated ? 'outdated' : 'missing'}.`,
             e = BdApi.findModuleByProps('push', 'update', 'pop', 'popWithKey'),
-            f = BdApi.findModuleByProps('Sizes', 'Weights'),
+            f = BdApi.findModuleByDisplayName('Text'),
             g = BdApi.findModule(a => a.defaultProps && a.key && 'confirm-modal' === a.key()),
             h = () => BdApi.alert(c, BdApi.React.createElement('span', {}, BdApi.React.createElement('div', {}, d), `Due to a slight mishap however, you'll have to download the libraries yourself.`, b || ZeresPluginLibraryOutdated ? BdApi.React.createElement('div', {}, BdApi.React.createElement('a', { href: 'https://betterdiscord.net/ghdl?id=2252', target: '_blank' }, 'Click here to download ZeresPluginLibrary')) : null));
           if (!e || !g || !f) return h();
@@ -1637,7 +1728,7 @@ var XenoLib = (() => {
                   Object.assign(
                     {
                       header: c,
-                      children: [BdApi.React.createElement(f, { color: f.Colors.PRIMARY, children: [`${d} Please click Download Now to download it.`] })],
+                      children: [BdApi.React.createElement(f, { size: f.Sizes.SIZE_16, children: [`${d} Please click Download Now to download it.`] })],
                       red: !1,
                       confirmText: 'Download Now',
                       cancelText: 'Cancel',
