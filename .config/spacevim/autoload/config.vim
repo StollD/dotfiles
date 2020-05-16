@@ -9,4 +9,5 @@ function! config#apply() abort
 
   set scrolloff=5
   set whichwrap+=<,>,[,]
+  set completeopt+=noselect
 endfunction
