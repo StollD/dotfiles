@@ -4,6 +4,5 @@ KERNEL="$1"
 
 git push origin debian-$KERNEL
 git push origin arch-$KERNEL
-git push origin fedora-30-$KERNEL
 git push origin fedora-31-$KERNEL
 git push origin fedora-32-$KERNEL
