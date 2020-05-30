@@ -27,7 +27,7 @@
  * All rights reserved.
  * Code may not be redistributed, modified or otherwise taken without explicit permission.
  */
-var XenoLib = (() => {
+module.exports = (() => {
   /* Setup */
   const config = {
     main: 'index.js',
@@ -41,8 +41,8 @@ var XenoLib = (() => {
           twitter_username: ''
         }
       ],
-      version: '1.3.19',
-      description: 'Simple library to complement plugins with shared code without lowering performance.',
+      version: '1.3.21',
+      description: 'Simple library to complement plugins with shared code without lowering performance. Also adds needed buttons to some plugins.',
       github: 'https://github.com/1Lighty',
       github_raw: 'https://raw.githubusercontent.com/1Lighty/BetterDiscordPlugins/master/Plugins/1XenoLib.plugin.js'
     },
@@ -50,7 +50,7 @@ var XenoLib = (() => {
       {
         title: 'Boring changes',
         type: 'fixed',
-        items: ['Fix up startup warnings and errors.', 'Fixed notifications closing sometimes if you hover them near the end of the timeout.', 'Future proofing.']
+        items: ['Change to module.exports', 'Extra plugin buttons on plugin cards are now opt-in (such as these ![image](https://i.imgur.com/rVdKi94.png)). They can be re-enabled in settings\n![image2](https://i.imgur.com/6BtqrmY.png)\notherwise the buttons are now in plugin settings (most of the time at least)']
       }
     ],
     defaultConfig: [
@@ -89,13 +89,29 @@ var XenoLib = (() => {
             value: true
           }
         ]
+      },
+      {
+        type: 'category',
+        id: 'addons',
+        name: 'AddonCard settings',
+        collapsible: true,
+        shown: false,
+        settings: [
+          {
+            name: 'Add extra buttons to specific plugins',
+            note: 'Disabling this will move the buttons to the bottom of plugin settings (if available)',
+            id: 'extra',
+            type: 'switch',
+            value: false
+          }
+        ]
       }
     ]
   };
 
   /* Build */
   const buildPlugin = ([Plugin, Api]) => {
-    const { ContextMenu, EmulatedTooltip, Toasts, Settings, Popouts, Modals, Utilities, WebpackModules, Filters, DiscordModules, ColorConverter, DOMTools, DiscordClasses, DiscordSelectors, ReactTools, ReactComponents, DiscordAPI, Logger, Patcher, PluginUpdater, PluginUtilities, DiscordClassModules, Structs } = Api;
+    const { ContextMenu, EmulatedTooltip, Toasts, Settings, Popouts, Modals, Utilities, WebpackModules, Filters, DiscordModules, ColorConverter, DOMTools, DiscordClasses, DiscordSelectors, ReactTools, ReactComponents, DiscordAPI, Logger, PluginUpdater, PluginUtilities, DiscordClassModules, Structs } = Api;
     const { React, ModalStack, ContextMenuActions, ContextMenuItem, ContextMenuItemsGroup, ReactDOM, ChannelStore, GuildStore, UserStore, DiscordConstants, Dispatcher, GuildMemberStore, GuildActions, PrivateChannelActions, LayerManager, InviteActions, FlexChild, Titles, Changelog: ChangelogModal } = DiscordModules;
 
     let CancelledAsync = false;
@@ -180,6 +196,25 @@ var XenoLib = (() => {
     };
     XenoLib.getClass.__warns = {};
     XenoLib.getSingleClass.__warns = {};
+
+    XenoLib.createSmartPatcher = patcher => {
+      const createPatcher = patcher => {
+        return (moduleToPatch, functionName, callback, options = {}) => {
+          const origDef = moduleToPatch[functionName];
+          patcher(moduleToPatch, functionName, callback, options);
+          if (origDef.isBDFDBpatched && moduleToPatch.BDFDBpatch && typeof moduleToPatch.BDFDBpatch[functionName].originalMethod === 'function') {
+            patcher(moduleToPatch.BDFDBpatch[functionName], 'originalMethod', callback, options);
+          }
+        };
+      };
+      return Object.assign({}, patcher, {
+        before: createPatcher(patcher.before),
+        instead: createPatcher(patcher.instead),
+        after: createPatcher(patcher.after)
+      });
+    };
+
+    const Patcher = XenoLib.createSmartPatcher(Api.Patcher);
 
     const LibrarySettings = XenoLib.loadData(config.info.name, 'settings', DefaultLibrarySettings);
 
@@ -380,112 +415,40 @@ var XenoLib = (() => {
       }
     };
 
-    XenoLib.__contextPatches = [];
-    try {
-      if (global.XenoLib) if (global.XenoLib.__contextPatches && global.XenoLib.__contextPatches.length) XenoLib.__contextPatches.push(...global.XenoLib.__contextPatches);
-      const ContextMenuClassname = XenoLib.getSingleClass('subMenuContext contextMenu'); /* I AM *SPEED* */
-      const getContextMenuChild = val => {
-        if (!val) return;
-        const isValid = obj => obj.type === 'div' && obj.props && typeof obj.props.className === 'string' && obj.props.className.indexOf(ContextMenuClassname) !== -1 && Array.isArray(Utilities.getNestedProp(obj, 'props.children.props.children'));
-        if (isValid(val)) return val.props.children;
-        const children = Utilities.getNestedProp(val, 'props.children');
-        if (!children) return;
-        if (Array.isArray(children)) {
-          for (let i = 0; i < children.length; i++) {
-            const ret = getContextMenuChild(children[i]);
-            if (ret) return ret.props.children;
-          }
-        } else if (isValid(children)) return children.props.children;
-      };
-      const handleContextMenu = (_this, ret, noRender) => {
-        const menuGroups = getContextMenuChild(ret) || ret;
-        if (!menuGroups) return /* Logger.warn('Failed to get context menu groups!', _this, ret) */;
-        /* emulate a react class component */
-        if (noRender) {
-          let [value, set] = React.useState(false);
-          let [state, setState] = React.useState({});
-          _this.forceUpdate = () => set(!value);
-          _this.state = state;
-          _this.setState = setState;
-        }
-        if (!_this.state) _this.state = {};
-        XenoLib.__contextPatches.forEach(e => {
-          try {
-            e(_this, menuGroups);
-          } catch (e) {
-            Logger.stacktrace('Error with patched context menu', e);
-          }
-        });
-      };
-      const getModule = regex => {
-        try {
-          const modules = WebpackModules.getAllModules();
-          for (const index in modules) {
-            if (!modules.hasOwnProperty(index)) continue;
-            const module = modules[index];
-            if (!module.exports || !module.exports.__esModule || !module.exports.default) continue;
-            /* if BDFDB was inited before us, patch the already patched function */
-            if (module.exports.default.toString().search(regex) !== -1 || (module.exports.default.isBDFDBpatched && module.exports.default.__originalMethod.toString().search(regex) !== -1)) return module;
-          }
-        } catch (e) {
-          Logger.stacktrace(`Failed to getModule by regex ${regex}`, e);
-          return null;
-        }
-      };
-      const renderContextMenus = ['NativeContextMenu', 'DeveloperContextMenu'];
-      const hookContextMenus = [getModule(/case \w.ContextMenuTypes.CHANNEL_LIST_TEXT/), getModule(/case \w.ContextMenuTypes.GUILD_CHANNEL_LIST/), getModule(/case \w.ContextMenuTypes.USER_CHANNEL_MEMBERS/), getModule(/case \w\.ContextMenuTypes\.MESSAGE_MAIN/)];
-      for (const type of renderContextMenus) {
-        const module = WebpackModules.getByDisplayName(type);
-        if (!module) {
-          Logger.warn(`Failed to find ContextMenu type`, type);
-          continue;
-        }
-        Patcher.after(module.prototype, 'render', (_this, _, ret) => handleContextMenu(_this, ret));
-      }
-      for (const menu of hookContextMenus) {
-        if (!menu) continue;
-        const origDef = menu.exports.default;
-        Patcher.after(menu.exports, 'default', (_, [props], ret) => handleContextMenu({ props }, ret, true));
-        if (origDef.isBDFDBpatched && menu.exports.BDFDBpatch && typeof menu.exports.BDFDBpatch.default.originalMethod === 'function') {
-          Patcher.after(menu.exports.BDFDBpatch.default, 'originalMethod', (_, [props], ret) => handleContextMenu({ props }, ret, true));
-        }
-      }
-      const GroupDMContextMenu = WebpackModules.getByDisplayName('FluxContainer(GroupDMContextMenu)');
-      if (GroupDMContextMenu) {
-        try {
-          const type = new GroupDMContextMenu({}).render().type;
-          Patcher.after(type.prototype, 'render', (_this, _, ret) => handleContextMenu(_this, ret));
-        } catch (e) {
-          Logger.stacktrace('Failed patching GroupDMContextMenu', e);
-        }
-      }
-    } catch (e) {
-      Logger.stacktrace('Failed to patch context menus', e);
-    }
-    XenoLib.patchContext = callback => {
-      XenoLib.__contextPatches.push(callback);
-    };
+    const deprecateFunction = (name, advice, ret = undefined) => () => (Logger.warn(`XenoLib.${name} is deprecated! ${advice}`), ret);
+
+    XenoLib.patchContext = deprecateFunction('patchContext', 'Do manual patching of context menus instead.');
+
+    const CTXMenu = WebpackModules.getByProps('default', 'MenuStyle');
 
     class ContextMenuWrapper extends React.PureComponent {
+      constructor(props) {
+        super(props);
+        this.handleOnClose = this.handleOnClose.bind(this);
+      }
+      handleOnClose() {
+        ContextMenuActions.closeContextMenu();
+        if (this.props.target instanceof HTMLElement) this.props.target.focus();
+      }
       render() {
-        return React.createElement('div', { className: DiscordClasses.ContextMenu.contextMenu }, this.props.menu);
+        return React.createElement(CTXMenu.default, { onClose: this.handleOnClose, id: 'xenolib-context' }, this.props.menu);
       }
     }
-    XenoLib.createSharedContext = (element, type, menuCreation) => {
+    XenoLib.createSharedContext = (element, menuCreation) => {
       if (element.__XenoLib_ContextMenus) {
         element.__XenoLib_ContextMenus.push(menuCreation);
       } else {
         element.__XenoLib_ContextMenus = [menuCreation];
         const oOnContextMenu = element.props.onContextMenu;
-        element.props.onContextMenu = e => (typeof oOnContextMenu === 'function' && oOnContextMenu(e), ContextMenuActions.openContextMenu(e, _ => React.createElement(ContextMenuWrapper, { menu: element.__XenoLib_ContextMenus.map(m => React.createElement(XenoLib.ReactComponents.ErrorBoundary, { label: 'shared context menu' }, m())), type })));
+        element.props.onContextMenu = e => (typeof oOnContextMenu === 'function' && oOnContextMenu(e), ContextMenuActions.openContextMenu(e, _ => React.createElement(XenoLib.ReactComponents.ErrorBoundary, { label: 'CTX Menu' }, React.createElement(ContextMenuWrapper, { menu: element.__XenoLib_ContextMenus.map(m => m()), ..._ }))));
       }
     };
 
-    const ContextMenuSubMenuItem = WebpackModules.getByDisplayName('FluxContainer(SubMenuItem)');
-    XenoLib.unpatchContext = callback => XenoLib.__contextPatches.splice(XenoLib.__contextPatches.indexOf(callback), 1);
-    XenoLib.createContextMenuItem = (label, action, options = {}) => (!ContextMenuItem ? null : React.createElement(ContextMenuItem, { label, action: () => (!options.noClose && ContextMenuActions.closeContextMenu(), action()), ...options }));
-    XenoLib.createContextMenuSubMenu = (label, items, options = {}) => (!ContextMenuSubMenuItem ? null : React.createElement(ContextMenuSubMenuItem, { label, render: items, ...options }));
-    XenoLib.createContextMenuGroup = (children, options) => (!ContextMenuItemsGroup ? null : React.createElement(ContextMenuItemsGroup, { children, ...options }));
+    const contextMenuItems = WebpackModules.find(m => m.MenuRadioItem && !m.default);
+    XenoLib.unpatchContext = deprecateFunction('unpatchContext', 'Manual patching needs manual unpatching');
+    XenoLib.createContextMenuItem = (label, action, id, options = {}) => (!contextMenuItems ? null : React.createElement(contextMenuItems.MenuItem, { label, id, action: () => (!options.noClose && ContextMenuActions.closeContextMenu(), action()), ...options }));
+    XenoLib.createContextMenuSubMenu = (label, children, id, options = {}) => (!contextMenuItems ? null : React.createElement(contextMenuItems.MenuItem, { label, children, id, ...options }));
+    XenoLib.createContextMenuGroup = (children, options) => (!contextMenuItems ? null : React.createElement(contextMenuItems.MenuGroup, { children, ...options }));
 
     try {
       XenoLib.ReactComponents.ButtonOptions = WebpackModules.getByProps('ButtonLink');
@@ -494,73 +457,147 @@ var XenoLib = (() => {
       Logger.stacktrace('Error getting Button component', e);
     }
 
-    try {
-      const LinkClassname = XenoLib.joinClassNames(XenoLib.getClass('anchorUnderlineOnHover anchor'), XenoLib.getClass('anchor anchorUnderlineOnHover'), 'bda-author');
-      const handlePatch = (_this, _, ret) => {
-        if (!_this.props.addon || !_this.props.addon.plugin || typeof _this.props.addon.plugin.getAuthor().indexOf('Lighty') === -1) return;
-        const author = Utilities.findInReactTree(ret, e => e && e.props && typeof e.props.className === 'string' && e.props.className.indexOf('bda-author') !== -1);
-        if (!author || typeof author.props.children !== 'string' || author.props.children.indexOf('Lighty') === -1) return;
-        const onClick = () => {
-          if (DiscordAPI.currentUser.id === XenoLib.authorId) return;
-          PrivateChannelActions.ensurePrivateChannel(DiscordAPI.currentUser.id, XenoLib.authorId).then(() => {
-            PrivateChannelActions.openPrivateChannel(DiscordAPI.currentUser.id, XenoLib.authorId);
-            LayerManager.popLayer();
-          });
+    function patchAddonCardAnyway(manualPatch) {
+      try {
+        if (patchAddonCardAnyway.patched) return;
+        patchAddonCardAnyway.patched = true;
+        const LinkClassname = XenoLib.joinClassNames(XenoLib.getClass('anchorUnderlineOnHover anchor'), XenoLib.getClass('anchor anchorUnderlineOnHover'), 'bda-author');
+        const handlePatch = (_this, _, ret) => {
+          if (!_this.props.addon || !_this.props.addon.plugin || typeof _this.props.addon.plugin.getAuthor().indexOf('Lighty') === -1) return;
+          const author = Utilities.findInReactTree(ret, e => e && e.props && typeof e.props.className === 'string' && e.props.className.indexOf('bda-author') !== -1);
+          if (!author || typeof author.props.children !== 'string' || author.props.children.indexOf('Lighty') === -1) return;
+          const onClick = () => {
+            if (DiscordAPI.currentUser.id === XenoLib.authorId) return;
+            PrivateChannelActions.ensurePrivateChannel(DiscordAPI.currentUser.id, XenoLib.authorId).then(() => {
+              PrivateChannelActions.openPrivateChannel(DiscordAPI.currentUser.id, XenoLib.authorId);
+              LayerManager.popLayer();
+            });
+          };
+          if (author.props.children === 'Lighty') {
+            author.type = 'a';
+            author.props.className = LinkClassname;
+            author.props.onClick = onClick;
+          } else {
+            const idx = author.props.children.indexOf('Lighty');
+            const pre = author.props.children.slice(0, idx);
+            const post = author.props.children.slice(idx + 6);
+            author.props.children = [
+              pre,
+              React.createElement(
+                'a',
+                {
+                  className: LinkClassname,
+                  onClick
+                },
+                'Lighty'
+              ),
+              post
+            ];
+            delete author.props.onClick;
+            author.props.className = 'bda-author';
+            author.type = 'span';
+          }
+          let footerProps = Utilities.findInReactTree(ret, e => e && e.props && typeof e.props.className === 'string' && e.props.className.indexOf('bda-links') !== -1);
+          if (!footerProps) return;
+          footerProps = footerProps.props;
+          if (!Array.isArray(footerProps.children)) footerProps.children = [footerProps.children];
+          const findLink = name => Utilities.findInReactTree(footerProps.children, e => e && e.props && e.props.children === name);
+          const websiteLink = findLink('Website');
+          const sourceLink = findLink('Source');
+          const supportServerLink = findLink('Support Server');
+          footerProps.children = [];
+          if (websiteLink) footerProps.children.push(websiteLink);
+          if (sourceLink) footerProps.children.push(websiteLink ? ' | ' : null, sourceLink);
+          footerProps.children.push(websiteLink || sourceLink ? ' | ' : null, React.createElement('a', { className: 'bda-link', onClick: e => ContextMenuActions.openContextMenu(e, e => React.createElement(XenoLib.ReactComponents.ErrorBoundary, { label: 'Donate button CTX menu' }, React.createElement(ContextMenuWrapper, { menu: XenoLib.createContextMenuGroup([XenoLib.createContextMenuItem('Paypal', () => window.open('https://paypal.me/lighty13'), 'paypal'), XenoLib.createContextMenuItem('Ko-fi', () => window.open('https://ko-fi.com/lighty_'), 'kofi'), XenoLib.createContextMenuItem('Patreon', () => window.open('https://www.patreon.com/lightyp'), 'patreon')]), ...e }))) }, 'Donate'));
+          footerProps.children.push(' | ', supportServerLink || React.createElement('a', { className: 'bda-link', onClick: () => (LayerManager.popLayer(), InviteActions.acceptInviteAndTransitionToInviteChannel('NYvWdN5')) }, 'Support Server'));
+          footerProps.children.push(' | ', React.createElement('a', { className: 'bda-link', onClick: () => (_this.props.addon.plugin.showChangelog ? _this.props.addon.plugin.showChangelog() : Modals.showChangelogModal(_this.props.addon.plugin.getName() + ' Changelog', _this.props.addon.plugin.getVersion(), _this.props.addon.plugin.getChanges())) }, 'Changelog'));
+          footerProps = null;
         };
-        if (author.props.children === 'Lighty') {
-          author.type = 'a';
-          author.props.className = LinkClassname;
-          author.props.onClick = onClick;
-        } else {
-          const idx = author.props.children.indexOf('Lighty');
-          const pre = author.props.children.slice(0, idx);
-          const post = author.props.children.slice(idx + 6);
-          author.props.children = [
-            pre,
-            React.createElement(
-              'a',
-              {
-                className: LinkClassname,
-                onClick
-              },
-              'Lighty'
-            ),
-            post
-          ];
-          delete author.props.onClick;
-          author.props.className = 'bda-author';
-          author.type = 'span';
+        async function patchRewriteCard() {
+          const component = [...ReactComponents.components.entries()].find(([_, e]) => e.component && e.component.prototype && e.component.prototype.reload && e.component.prototype.showSettings);
+          const AddonCard = component ? component[1] : await ReactComponents.getComponent('AddonCard', '.bda-slist > .ui-switch-item', e => e.prototype && e.prototype.reload && e.prototype.showSettings);
+          if (CancelledAsync) return;
+          const BDErrorBoundary = await ReactComponents.getComponent('BDErrorBoundary', '.bda-slist > .ui-switch-item', e => {
+            try {
+              return e.prototype && e.prototype.render && e.prototype.render.toString().indexOf('},"Component Error"):') !== -1;
+            } catch (err) {
+              return false;
+            }
+          });
+          if (CancelledAsync) return;
+          class PatchedAddonCard extends AddonCard.component {
+            render() {
+              const ret = super.render();
+              try {
+                /* did I mention I am Lighty? */
+                handlePatch(this, undefined, ret);
+              } catch (err) {
+                Logger.stacktrace('AddonCard patch', err);
+              }
+              return ret;
+            }
+          }
+          Patcher.after(BDErrorBoundary.component.prototype, 'render', (_, __, ret) => {
+            if (!LibrarySettings.addons.extra || ret.type !== AddonCard.component) return;
+            ret.type = PatchedAddonCard;
+          });
+          if (manualPatch) return;
+          AddonCard.forceUpdateAll();
         }
-        let footerProps = Utilities.findInReactTree(ret, e => e && e.props && typeof e.props.className === 'string' && e.props.className.indexOf('bda-links') !== -1);
-        if (!footerProps) return;
-        footerProps = footerProps.props;
-        if (!Array.isArray(footerProps.children)) footerProps.children = [footerProps.children];
-        const findLink = name => Utilities.findInReactTree(footerProps.children, e => e && e.props && e.props.children === name);
-        const websiteLink = findLink('Website');
-        const sourceLink = findLink('Source');
-        const supportServerLink = findLink('Support Server');
-        footerProps.children = [];
-        if (websiteLink) footerProps.children.push(websiteLink);
-        if (sourceLink) footerProps.children.push(websiteLink ? ' | ' : null, sourceLink);
-        footerProps.children.push(websiteLink || sourceLink ? ' | ' : null, React.createElement('a', { className: 'bda-link', onClick: e => ContextMenuActions.openContextMenu(e, e => React.createElement('div', { className: DiscordClasses.ContextMenu.contextMenu }, XenoLib.createContextMenuGroup([XenoLib.createContextMenuItem('Paypal', () => window.open('https://paypal.me/lighty13')), XenoLib.createContextMenuItem('Ko-fi', () => window.open('https://ko-fi.com/lighty_')), XenoLib.createContextMenuItem('Patreon', () => window.open('https://www.patreon.com/lightyp'))]))) }, 'Donate'));
-        footerProps.children.push(' | ', supportServerLink || React.createElement('a', { className: 'bda-link', onClick: () => (LayerManager.popLayer(), InviteActions.acceptInviteAndTransitionToInviteChannel('NYvWdN5')) }, 'Support Server'));
-        footerProps.children.push(' | ', React.createElement('a', { className: 'bda-link', onClick: () => (_this.props.addon.plugin.showChangelog ? _this.props.addon.plugin.showChangelog() : Modals.showChangelogModal(_this.props.addon.plugin.getName() + ' Changelog', _this.props.addon.plugin.getVersion(), _this.props.addon.plugin.getChanges())) }, 'Changelog'));
-        footerProps = null;
+        patchRewriteCard();
+      } catch (e) {
+        Logger.stacktrace('Failed to patch V2C_*Card or AddonCard (BBD rewrite)', e);
+      }
+    }
+    if (LibrarySettings.addons.extra) patchAddonCardAnyway();
+
+    try {
+      XenoLib.ReactComponents.PluginFooter = class XLPluginFooter extends React.PureComponent {
+        render() {
+          if (LibrarySettings.addons.extra) return null;
+          return React.createElement(
+            'div',
+            {
+              style: {
+                display: 'flex'
+              }
+            },
+            React.createElement(
+              XenoLib.ReactComponents.Button,
+              {
+                style: {
+                  flex: '2 1 auto'
+                },
+                onClick: this.props.showChangelog
+              },
+              'Changelog'
+            ),
+            React.createElement(
+              XenoLib.ReactComponents.Button,
+              {
+                style: {
+                  flex: '2 1 auto'
+                },
+                onClick: e => ContextMenuActions.openContextMenu(e, e => React.createElement(XenoLib.ReactComponents.ErrorBoundary, { label: 'Donate button CTX menu' }, React.createElement(ContextMenuWrapper, { menu: XenoLib.createContextMenuGroup([XenoLib.createContextMenuItem('Paypal', () => window.open('https://paypal.me/lighty13'), 'paypal'), XenoLib.createContextMenuItem('Ko-fi', () => window.open('https://ko-fi.com/lighty_'), 'kofi'), XenoLib.createContextMenuItem('Patreon', () => window.open('https://www.patreon.com/lightyp'), 'patreon')]), ...e })))
+              },
+              'Donate'
+            ),
+            React.createElement(
+              XenoLib.ReactComponents.Button,
+              {
+                style: {
+                  flex: '2 1 auto'
+                },
+                onClick: () => (LayerManager.popLayer(), InviteActions.acceptInviteAndTransitionToInviteChannel('NYvWdN5'))
+              },
+              'Support server'
+            )
+          );
+        }
       };
-      async function patchRewriteCard() {
-        /*  nice try hiding it
-            adds extra buttons in BBD rewrite c:
-         */
-        const component = [...ReactComponents.components.entries()].find(([_, e]) => e.component && e.component.prototype && e.component.prototype.reload && e.component.prototype.showSettings);
-        const AddonCard = component ? component[1] : await ReactComponents.getComponent('AddonCard', '.bda-slist > .ui-switch-item', e => e.prototype && e.prototype.reload && e.prototype.showSettings);
-        if (CancelledAsync) return;
-        /* *laughs in evil* */
-        Patcher.after(AddonCard.component.prototype, 'render', handlePatch, { displayName: AddonCard.id });
-        AddonCard.forceUpdateAll();
-      } /* I have a feeling I'm gonna get yelled at for doing this :eyes: */
-      patchRewriteCard();
-    } catch (e) {
-      Logger.stacktrace('Failed to patch V2C_*Card or AddonCard (BBD rewrite)', e);
+    } catch (err) {
+      Logger.stacktrace('Error creating plugin footer');
+      XenoLib.ReactComponents.PluginFooter = DiscordConstants.NOOP_NULL;
     }
 
     const TextElement = WebpackModules.getByDisplayName('Text');
@@ -821,6 +858,14 @@ var XenoLib = (() => {
           },
           defaultColor: typeof options.defaultColor !== 'undefined' ? options.defaultColor : ColorConverter.int2hex(DiscordConstants.DEFAULT_ROLE_COLOR),
           value
+        });
+      }
+    };
+
+    XenoLib.Settings.PluginFooter = class PluginFooterField extends Settings.SettingField {
+      constructor(showChangelog) {
+        super('', '', DiscordConstants.NOOP, XenoLib.ReactComponents.PluginFooter, {
+          showChangelog
         });
       }
     };
@@ -1610,7 +1655,9 @@ var XenoLib = (() => {
         return super.buildSetting(data);
       }
       getSettingsPanel() {
-        return this.buildSettingsPanel().getElement();
+        return this.buildSettingsPanel()
+          .append(new XenoLib.Settings.PluginFooter(() => this.showChangelog()))
+          .getElement();
       }
       saveSettings(category, setting, value) {
         this.settings[category][setting] = value;
@@ -1625,6 +1672,11 @@ var XenoLib = (() => {
             }
           } else if (setting === 'backdrop' || setting === 'backdropColor') {
             Dispatcher.wait(() => Dispatcher.dispatch({ type: 'XL_NOTIFS_SETTINGS_UPDATE', key: UPDATEKEY }), (UPDATEKEY = {}));
+          }
+        } else if (category === 'addons') {
+          if (setting === 'extra') {
+            if (value && !patchAddonCardAnyway.patched) patchAddonCardAnyway(true);
+            XenoLib.Notifications.warning('Reopen plugins section for immediate effect');
           }
         }
       }

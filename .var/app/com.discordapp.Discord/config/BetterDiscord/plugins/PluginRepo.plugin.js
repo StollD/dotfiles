@@ -51,7 +51,7 @@ var PluginRepo = (_ => {
 	
 	const repoListComponent = class PluginList extends BdApi.React.Component {
 		render() {
-			let list = BDFDB.ReactUtils.createElement("ul", {
+			let list = BDFDB.ReactUtils.createElement("div", {
 				className: BDFDB.disCN._repolist,
 				style: {
 					display: "flex",
@@ -69,7 +69,7 @@ var PluginRepo = (_ => {
 	return class PluginRepo {
 		getName () {return "PluginRepo";} 
 
-		getVersion () {return "1.9.7";}
+		getVersion () {return "1.9.8";}
 
 		getAuthor () {return "DevilBro";}
 
@@ -77,8 +77,8 @@ var PluginRepo = (_ => {
 
 		constructor () {
 			this.changelog = {
-				"improved":[["Loading","Switched from using and iFrame to using an extra Browser Window to load the plugin list, should be faster too"]]
-			};	
+				"fixed":[["Context Menu Update","Fixes for the context menu update, yaaaaaay"]]
+			};
 			
 			this.patchedModules = {
 				after: {
@@ -274,8 +274,9 @@ var PluginRepo = (_ => {
 		onUserSettingsCogContextMenu (e) {
 			BDFDB.TimeUtils.timeout(_ => {
 				let [children, index] = BDFDB.ReactUtils.findChildren(e.returnvalue, {props: [["label", "BandagedBD"]]});
-				if (index > -1) children[index].props.render.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.ContextMenuItems.Item, {
+				if (index > -1 && BDFDB.ArrayUtils.is(children[index].props.children)) children[index].props.children.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuItem, {
 					label: "Plugin Repo",
+					id: BDFDB.ContextMenuUtils.createItemId(this.name, "repo"),
 					action: _ => {
 						if (!loading.is) BDFDB.ContextMenuUtils.close(e.instance);
 						this.openPluginRepoModal();
