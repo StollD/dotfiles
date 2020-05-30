@@ -98,3 +98,7 @@ merged = false
 [[custom_plugins]]
 name = 'Raimondi/YAIFA'
 merged = false
+
+[[custom_plugins]]
+name = 'igankevich/mesonic'
+merged = false
