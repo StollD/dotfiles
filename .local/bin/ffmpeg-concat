@@ -1,0 +1,41 @@
+#!/bin/sh
+
+usage()
+{
+	echo "Usage: $0 [OPTIONS] INFILES..."
+	echo "Merges multiple video files using ffmpeg"
+	echo
+	echo "Options:"
+	echo "    -h    This help message"
+	echo "    -o    The name of the produced file"
+	exit
+}
+
+O=""
+
+while getopts ":ho:" args; do
+	case "$args" in
+	o)
+		O="$OPTARG"
+		;;
+	h)
+		usage
+		;;
+	esac
+done
+
+TEMP=$(mktemp)
+FILENAME="$O"
+
+for file in "$@"; do
+	if [ ! -f "$file" ]; then
+		continue
+	fi
+	echo $file
+	echo "file '$(readlink -f $file)'" >> $TEMP
+	if [ "$O" = "" ]; then
+		FILENAME="$FILENAME-$(basename $file)"
+	fi
+done
+
+ffmpeg -f concat -safe 0 -i $TEMP -c copy $FILENAME
