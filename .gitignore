@@ -1,3 +1,5 @@
+.config/fish/fish_variables
+
 .var/app/com.discordapp.Discord/config/BetterDiscord/emote_data.json
 .var/app/com.discordapp.Discord/config/BetterDiscord/logs.log
 .var/app/com.discordapp.Discord/config/BetterDiscord/bdstorage.json
