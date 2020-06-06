@@ -6,4 +6,4 @@ if [ ! "$(stat -c "%a" $SPOTIFY)" = "777" ]; then
 	sudo chmod -R 777 $SPOTIFY
 fi
 
-$HOME/.local/share/spicetify/spicetify $@
+exec $HOME/.local/share/spicetify/spicetify $@

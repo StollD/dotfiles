@@ -11,4 +11,4 @@ if [ -f "$PROTONPREFIX/pfx.lock" ]; then
 	rm "$PROTONPREFIX/pfx.lock"
 fi
 
-$HOME/.local/share/proton/proton run $@
+exec $HOME/.local/share/proton/proton run $@
