@@ -1,6 +1,7 @@
 .var/app/com.discordapp.Discord/config/BetterDiscord/emote_data.json
 .var/app/com.discordapp.Discord/config/BetterDiscord/logs.log
-.var/app/com.discordapp.Discord/config/BetterDiscord/plugins/*.json
+.var/app/com.discordapp.Discord/config/BetterDiscord/bdstorage.json
+.var/app/com.discordapp.Discord/config/BetterDiscord/plugins
 
 # Make sure that we don't commit the symlink for alternative files
 .config/alacritty/alacritty.yml
