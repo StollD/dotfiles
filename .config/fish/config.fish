@@ -20,7 +20,7 @@ end
 set -gx QT_AUTO_SCREEN_SCALE_FACTOR 1
 
 # Force alacritty to use X11, to get nice decorations in GNOME
-set -gx WINNT_UNIX_BACKEND x11
+set -gx WINIT_UNIX_BACKEND x11
 
 # Wine
 set -gx WINEARCH win64
