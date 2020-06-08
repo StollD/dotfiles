@@ -34,7 +34,7 @@ set -gx CCACHE_MAXSIZE 100G
 
 # Misc paths
 set -gx GOPATH ~/.local/share/go
-set -gx SPACEVIMDIR ~/.config/spacevim
+set -gx SPACEVIMDIR ~/.config/spacevim/
 
 # $PATH
 set -gx PATH /usr/lib64/ccache $PATH
