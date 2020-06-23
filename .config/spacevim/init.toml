@@ -31,7 +31,6 @@ default_indent = 8
 expand_tab = false
 
 filemanager = 'defx'
-disabled_plugins = ['deoplete-go']
 
 # Custom vimscript options 
 bootstrap_before = 'user#apply'
