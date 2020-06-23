@@ -36,10 +36,22 @@ set -gx CCACHE_MAXSIZE 100G
 set -gx GOPATH ~/.local/share/go
 set -gx SPACEVIMDIR ~/.config/spacevim/
 
+# Force qtdeploy to link against system libraries
+set -gx QT_PKG_CONFIG true
+
 # $PATH
+set -gx PATH /usr/local/sbin /usr/sbin /sbin
+set -gx PATH /usr/local/bin /usr/bin /bin $PATH
+set -gx PATH /usr/share/Modules/bin $PATH
 set -gx PATH /usr/lib64/ccache $PATH
-set -gx PATH ~/.local/bin $PATH
 set -gx PATH ~/.local/share/go/bin $PATH
+set -gx PATH ~/.dotnet/tools $PATH
+set -gx PATH ~/.local/bin $PATH
+
+set -gx XDG_DATA_DIRS /usr/share
+set -gx XDG_DATA_DIRS /usr/local/share:$XDG_DATA_DIRS
+set -gx XDG_DATA_DIRS /var/lib/flatpak/exports/share:$XDG_DATA_DIRS
+set -gx XDG_DATA_DIRS ~/.local/share/flatpak/exports/share:$XDG_DATA_DIRS
 
 # Git config
 # 
