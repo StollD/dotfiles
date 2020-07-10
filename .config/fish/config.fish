@@ -11,6 +11,7 @@ switch $XDG_CURRENT_DESKTOP
 case GNOME
 	set -gx VISUAL gedit
 	set -gx QT_QPA_PLATFORMTHEME qt5ct
+	set -gx WINIT_UNIX_BACKEND x11
 case KDE
 	set -gx VISUAL kate
 	set -gx QT_QPA_PLATFORMTHEME kde
@@ -18,9 +19,6 @@ case KDE
 end
 
 set -gx QT_AUTO_SCREEN_SCALE_FACTOR 1
-
-# Force alacritty to use X11, to get nice decorations in GNOME
-set -gx WINIT_UNIX_BACKEND x11
 
 # Wine
 set -gx WINEARCH win64
