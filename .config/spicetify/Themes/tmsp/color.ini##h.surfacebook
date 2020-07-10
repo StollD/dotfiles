@@ -1,8 +1,8 @@
 [main]
-main_fg                               = 8AB4F8
+main_fg                               = 5294E2
 secondary_fg                          = BDC1C6
-main_bg                               = 353535
-sidebar_and_player_bg                 = 353535
+main_bg                               = 2F343F
+sidebar_and_player_bg                 = 2F343F
 cover_overlay_and_shadow              = 202020
 indicator_fg_and_button_bg            = 313235
 pressing_fg                           = 1a73e8
