@@ -51,6 +51,10 @@ set -gx XDG_DATA_DIRS /usr/local/share:$XDG_DATA_DIRS
 set -gx XDG_DATA_DIRS /var/lib/flatpak/exports/share:$XDG_DATA_DIRS
 set -gx XDG_DATA_DIRS ~/.local/share/flatpak/exports/share:$XDG_DATA_DIRS
 
+# Mesa stuff
+set -gx mesa_glthread true
+set -gx RADV_PERFTEST aco
+
 # Git config
 # 
 # Why set this every time the shell is started? Because I generally want
