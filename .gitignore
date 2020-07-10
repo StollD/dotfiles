@@ -6,6 +6,6 @@
 .var/app/com.discordapp.Discord/config/BetterDiscord/plugins
 
 # Make sure that we don't commit the symlink for alternative files
-.config/alacritty/alacritty.yml
+.config/kitty/kitty.conf
 .var/app/com.discordapp.Discord/config/BetterDiscord/themes
 .config/spicetify/Themes/tmsp/color.ini
