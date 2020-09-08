@@ -55,6 +55,8 @@ set -gx XDG_DATA_DIRS ~/.local/share/flatpak/exports/share:$XDG_DATA_DIRS
 set -gx mesa_glthread true
 set -gx RADV_PERFTEST aco
 
+set -gx MOZ_X11_EGL 1
+
 # Git config
 # 
 # Why set this every time the shell is started? Because I generally want
