@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ "$TC" = "" ]; then
+	TC=$(rpmbuild --eval '%toolchain')
+fi
+
+export CC="$(rpmbuild -D "toolchain $TC" --eval '%__cc')"
+export CXX="$(rpmbuild -D "toolchain $TC" --eval '%__cxx')"
+export CFLAGS="$(rpmbuild -D "toolchain $TC" --eval '%build_cflags' | sed 's|-mtune=generic||g')"
+export CXXFLAGS="$(rpmbuild -D "toolchain $TC" --eval '%build_cxxflags')"
+export LDFLAGS="$(rpmbuild -D "toolchain $TC" --eval '%build_ldflags')"
+
+exec $@
+

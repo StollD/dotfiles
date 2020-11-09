@@ -30,13 +30,6 @@ set -gx CCACHE_DIR ~/.ccache
 set -gx USE_CCACHE 1
 set -gx CCACHE_MAXSIZE 100G
 
-# Follow default compiler flags for packages
-set -gx CFLAGS (rpmbuild --eval "%build_cflags")
-set -gx CXXFLAGS (rpmbuild --eval "%build_cxxflags")
-set -gx FFLAGS (rpmbuild --eval "%build_fflags")
-set -gx FCFLAGS (rpmbuild --eval "%build_fflags")
-set -gx LDFLAGS (rpmbuild --eval "%build_ldflags")
-
 # Misc paths
 set -gx GOPATH ~/.local/share/go
 set -gx SPACEVIMDIR ~/.config/spacevim/
