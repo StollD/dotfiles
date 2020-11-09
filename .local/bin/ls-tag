@@ -6,3 +6,4 @@ git tag -f debian-$KERNEL
 git tag -f arch-$KERNEL
 git tag -f fedora-31-$KERNEL
 git tag -f fedora-32-$KERNEL
+git tag -f fedora-33-$KERNEL

@@ -6,3 +6,4 @@ git push origin debian-$KERNEL
 git push origin arch-$KERNEL
 git push origin fedora-31-$KERNEL
 git push origin fedora-32-$KERNEL
+git push origin fedora-33-$KERNEL
