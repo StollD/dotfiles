@@ -4,11 +4,16 @@ if [ -d "$HOME/.local/share/proton" ]; then
 	rm -r $HOME/.local/share/proton
 fi
 
+if [ -d "$HOME/.var/app/com.valvesoftware.Steam/data/Steam/compatibilitytools.d" ]; then
+	rm -r $HOME/.var/app/com.valvesoftware.Steam/data/Steam/compatibilitytools.d
+fi
+
 URL=$(curl --silent "https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest" | 
 	tr ',' '\n' | grep '"browser_download_url":' | 
 	sed -E 's/.*"([^"]+)".*/\1/')
 wget -O proton.tar.gz $URL
 
 tar xzf proton.tar.gz -C $HOME/.local/share
-mv .local/share/Proton-*-GE-* .local/share/proton
+mv $HOME/.local/share/Proton-*-GE-* $HOME/.local/share/proton
+cp -r $HOME/.local/share/proton .var/app/com.valvesoftware.Steam/data/Steam/compatibilitytools.d
 rm proton.tar.gz
