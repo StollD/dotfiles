@@ -4,16 +4,16 @@
 # Environment configuration
 #
 
-set -gx EDITOR nvim
-set -gx SUDO_EDITOR nvim
+set -gx EDITOR em
+set -gx SUDO_EDITOR em
 
 switch $XDG_CURRENT_DESKTOP
 case GNOME
-	set -gx VISUAL gedit
+	set -gx VISUAL e
 	set -gx QT_QPA_PLATFORMTHEME qt5ct
 	set -gx WINIT_UNIX_BACKEND x11
 case KDE
-	set -gx VISUAL kate
+	set -gx VISUAL e
 	set -gx QT_QPA_PLATFORMTHEME kde
 	set -gx GTK_USE_PORTAL 1
 end
@@ -44,6 +44,7 @@ set -gx PATH /usr/share/Modules/bin $PATH
 set -gx PATH /usr/lib64/ccache $PATH
 set -gx PATH ~/.local/share/go/bin $PATH
 set -gx PATH ~/.dotnet/tools $PATH
+set -gx PATH ~/.config/emacs/bin $PATH
 set -gx PATH ~/.local/bin $PATH
 
 set -gx XDG_DATA_DIRS /usr/share
@@ -53,8 +54,6 @@ set -gx XDG_DATA_DIRS ~/.local/share/flatpak/exports/share:$XDG_DATA_DIRS
 
 # Mesa stuff
 set -gx mesa_glthread true
-set -gx RADV_PERFTEST aco
-
 set -gx MOZ_X11_EGL 1
 
 # Git config
