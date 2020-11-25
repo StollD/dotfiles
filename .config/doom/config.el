@@ -9,6 +9,12 @@
 (setq-default show-trailing-whitespace t)
 (setq-default indent-tabs-mode t)
 
+(require 'whitespace)
+(setq whitespace-style '(face trailing tabs spaces
+				lines-tail empty indentation
+				space-after-tab space-before-tab))
+(global-whitespace-mode t)
+
 (cua-mode t)
 (transient-mark-mode 1)
 (setq cua-auto-tabify-rectangles nil)
