@@ -42,9 +42,10 @@ set -gx PATH /usr/local/sbin /usr/sbin /sbin
 set -gx PATH /usr/local/bin /usr/bin /bin $PATH
 set -gx PATH /usr/share/Modules/bin $PATH
 set -gx PATH /usr/lib64/ccache $PATH
+set -gx PATH ~/.local/share/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin $PATH
 set -gx PATH ~/.local/share/go/bin $PATH
-set -gx PATH ~/.dotnet/tools $PATH
 set -gx PATH ~/.config/emacs/bin $PATH
+set -gx PATH ~/.dotnet/tools $PATH
 set -gx PATH ~/.local/bin $PATH
 
 set -gx XDG_DATA_DIRS /usr/share

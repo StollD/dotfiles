@@ -1,0 +1,17 @@
+[host_machine]
+system = 'android'
+cpu_family = 'arm'
+cpu = 'aarch64'
+endian = 'little'
+
+[properties]
+needs_exe_wrapper = true
+
+[binaries]
+c = 'aarch64-linux-android21-clang'
+cpp = 'aarch64-linux-android21-clang++'
+ar = 'aarch64-linux-android-ar'
+strip = 'aarch64-linux-android-strip'
+ld = 'aarch64-linux-android-ld'
+ranlib = 'aarch64-linux-android-ranlib'
+as = 'aarch64-linux-android-as'
