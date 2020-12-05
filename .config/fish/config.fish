@@ -38,11 +38,11 @@ set -gx SPACEVIMDIR ~/.config/spacevim/
 set -gx QT_PKG_CONFIG true
 
 # $PATH
-set -gx PATH /usr/local/sbin /usr/sbin /sbin
+set -gx PATH ~/.local/share/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin
+set -gx PATH /usr/local/sbin /usr/sbin /sbin $PATH
 set -gx PATH /usr/local/bin /usr/bin /bin $PATH
 set -gx PATH /usr/share/Modules/bin $PATH
 set -gx PATH /usr/lib64/ccache $PATH
-set -gx PATH ~/.local/share/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin $PATH
 set -gx PATH ~/.local/share/go/bin $PATH
 set -gx PATH ~/.config/emacs/bin $PATH
 set -gx PATH ~/.dotnet/tools $PATH
