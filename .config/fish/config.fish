@@ -4,16 +4,14 @@
 # Environment configuration
 #
 
+set -gx VISUAL e
 set -gx EDITOR em
 set -gx SUDO_EDITOR em
 
 switch $XDG_CURRENT_DESKTOP
 case GNOME
-	set -gx VISUAL e
 	set -gx QT_QPA_PLATFORMTHEME qt5ct
-	set -gx WINIT_UNIX_BACKEND x11
 case KDE
-	set -gx VISUAL e
 	set -gx QT_QPA_PLATFORMTHEME kde
 	set -gx GTK_USE_PORTAL 1
 end
@@ -30,35 +28,41 @@ set -gx CCACHE_DIR ~/.ccache
 set -gx USE_CCACHE 1
 set -gx CCACHE_MAXSIZE 100G
 
-# Misc paths
+# Misc stuff
 set -gx GOPATH ~/.local/share/go
-set -gx SPACEVIMDIR ~/.config/spacevim/
-
-# Force qtdeploy to link against system libraries
-set -gx QT_PKG_CONFIG true
-
-# $PATH
-set -gx PATH ~/.local/share/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin
-set -gx PATH /usr/local/sbin /usr/sbin /sbin $PATH
-set -gx PATH /usr/local/bin /usr/bin /bin $PATH
-set -gx PATH /usr/share/Modules/bin $PATH
-set -gx PATH /usr/lib64/ccache $PATH
-set -gx PATH ~/.local/share/go/bin $PATH
-set -gx PATH ~/.config/emacs/bin $PATH
-set -gx PATH ~/.dotnet/tools $PATH
-set -gx PATH ~/.local/bin $PATH
-
-set -gx XDG_DATA_DIRS /usr/share
-set -gx XDG_DATA_DIRS /usr/local/share:$XDG_DATA_DIRS
-set -gx XDG_DATA_DIRS /var/lib/flatpak/exports/share:$XDG_DATA_DIRS
-set -gx XDG_DATA_DIRS ~/.local/share/flatpak/exports/share:$XDG_DATA_DIRS
-
-# Mesa stuff
 set -gx mesa_glthread true
 set -gx MOZ_X11_EGL 1
 
+# Reset and refill PATH
+set -e PATH
+
+set -gx -a PATH ~/.local/bin
+set -gx -a PATH ~/.config/emacs/bin
+set -gx -a PATH ~/.local/share/go/bin
+set -gx -a PATH /usr/lib64/ccache
+set -gx -a PATH /usr/local/bin
+set -gx -a PATH /usr/local/sbin
+set -gx -a PATH /usr/bin
+set -gx -a PATH /usr/sbin
+
+# NDK cross compilers
+#
+# These needs to be added last, so that the android
+# clang doesnt override the system clang
+if [ -d ~/.local/share/ndk ]
+	set -gx -a PATH ~/.local/share/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin
+end
+
+# Reset and refill data dirs
+set -e XDG_DATA_DIRS
+
+set -gx --path -a XDG_DATA_DIRS ~/.local/share/flatpak/exports/share
+set -gx --path -a XDG_DATA_DIRS /var/lib/flatpak/exports/share
+set -gx --path -a XDG_DATA_DIRS /usr/local/share
+set -gx --path -a XDG_DATA_DIRS /usr/share
+
 # Git config
-# 
+#
 # Why set this every time the shell is started? Because I generally want
 # to gpg sign my commits, but in some situations I need to disable it
 # temporarily. This is so I don't forget to reenable it later on.
