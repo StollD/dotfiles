@@ -4,6 +4,7 @@ Description=Emacs: the extensible, self-documenting text editor
 [Service]
 Type=oneshot
 ExecStart=%h/.local/bin/tb/emacs --daemon
+RemainAfterExit=yes
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
