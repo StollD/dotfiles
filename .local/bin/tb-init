@@ -1,0 +1,37 @@
+#!/bin/sh
+
+sudo dnf remove -y fedora-repos-modular
+sudo dnf config-manager --set-enabled updates-testing
+sudo dnf config-manager --set-disabled fedora-cisco-openh264
+sudo dnf distro-sync -y
+
+sudo dnf groupinstall -y rpm-development-tools
+sudo dnf groupinstall -y c-development
+
+sudo dnf install -y \
+	glibc-all-langpacks \
+	emacs \
+	fish \
+	meson \
+	cmake \
+	make \
+	gcc \
+	clang \
+	ccls \
+	rpkg \
+	ripgrep \
+	fd-find \
+	editorconfig \
+	jq \
+	pandoc \
+	libmarkdown \
+	ShellCheck \
+	python3-isort \
+	pipenv \
+	nosetests \
+	python3-pytest \
+	libvterm \
+	fira-code-fonts \
+	npm
+
+sudo npm -i -g bash-language-server

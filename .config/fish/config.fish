@@ -4,6 +4,10 @@
 # Environment configuration
 #
 
+if grep -q Silverblue /etc/os-release
+	set -gx SILVERBLUE true
+end
+
 set -gx VISUAL e
 set -gx EDITOR em
 set -gx SUDO_EDITOR em
@@ -39,6 +43,8 @@ set -e PATH
 set -gx -a PATH ~/.local/bin
 set -gx -a PATH ~/.config/emacs/bin
 set -gx -a PATH ~/.local/share/go/bin
+set -gx -a PATH ~/.local/share/flatpak/exports/bin
+set -gx -a PATH /var/lib/flatpak/exports/bin
 set -gx -a PATH /usr/lib64/ccache
 set -gx -a PATH /usr/local/bin
 set -gx -a PATH /usr/local/sbin
@@ -51,6 +57,11 @@ set -gx -a PATH /usr/sbin
 # clang doesnt override the system clang
 if [ -d ~/.local/share/ndk ]
 	set -gx -a PATH ~/.local/share/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin
+end
+
+# Toolbox
+if [ "$SILVERBLUE" -a ! (hostname) = "toolbox" ]
+	set -gx -p PATH ~/.local/bin/tb
 end
 
 # Reset and refill data dirs

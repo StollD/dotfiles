@@ -39,6 +39,13 @@ function fish_prompt
 		set suffix '$'
 	end
 
+	# Toolbox
+	if [ (hostname) = "toolbox" ]
+		set_color brred
+		printf '⬢ '
+		set_color normal
+	end
+
 	# PWD
 	set_color $color_cwd
 	echo -n (prompt_pwd)

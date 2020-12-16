@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# If we are inside the toolbox, run the wrapped command in a shell
+if [ "$(hostname)" = "toolbox" ] || [ "$SILVERBLUE" = "" ]; then
+	exec $SHELL -c "$(basename $0) $@"
+fi
+
+# Proxy to ourselves inside of the toolbox
+exec toolbox run $0 $@
