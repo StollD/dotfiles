@@ -36,6 +36,7 @@ set -gx CCACHE_MAXSIZE 100G
 set -gx GOPATH ~/.local/share/go
 set -gx mesa_glthread true
 set -gx MOZ_X11_EGL 1
+set -gx RPM_BUILD_NCPUS 12
 
 # Reset and refill PATH
 set -e PATH
