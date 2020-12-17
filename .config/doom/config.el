@@ -14,6 +14,7 @@
 				lines-tail empty indentation
 				space-after-tab space-before-tab))
 (global-whitespace-mode t)
+(global-display-line-numbers-mode)
 
 (cua-mode t)
 (transient-mark-mode 1)
