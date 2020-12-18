@@ -3,7 +3,8 @@
 (setq user-full-name "Dorian Stoll")
 (setq user-mail-address "dorian.stoll@tmsp.io")
 
-(load! "local.el")
+(setq doom-theme 'doom-vibrant)
+(setq doom-font (font-spec :family "Fira Code" :size 13 :weight 'semi-light))
 
 (setq display-line-numbers-type t)
 (setq-default show-trailing-whitespace t)
