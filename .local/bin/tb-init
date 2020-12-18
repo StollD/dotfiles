@@ -32,6 +32,9 @@ sudo dnf install -y \
 	python3-pytest \
 	libvterm \
 	fira-code-fonts \
-	npm
+	npm \
+	gnome-themes-extra \
+	adwaita-gtk2-theme \
+	htop
 
 sudo npm i -g bash-language-server
