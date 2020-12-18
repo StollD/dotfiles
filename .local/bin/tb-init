@@ -8,6 +8,8 @@ sudo dnf distro-sync -y
 sudo dnf groupinstall -y rpm-development-tools
 sudo dnf groupinstall -y c-development
 
+sudo dnf copr enable deathwish/emacs-pgtk-nativecomp
+
 sudo dnf install -y \
 	glibc-all-langpacks \
 	emacs \
