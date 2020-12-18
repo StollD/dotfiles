@@ -28,7 +28,7 @@ sudo dnf install -y \
 	ShellCheck \
 	python3-isort \
 	pipenv \
-	nosetests \
+	python3-nose \
 	python3-pytest \
 	libvterm \
 	fira-code-fonts \
