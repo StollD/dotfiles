@@ -5,4 +5,4 @@ Description=Emacs: the extensible, self-documenting text editor
 ExecStart=%h/.local/bin/tb/emacs --fg-daemon
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=default.target
