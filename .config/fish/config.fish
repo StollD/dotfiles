@@ -24,8 +24,7 @@ set -gx QT_AUTO_SCREEN_SCALE_FACTOR 1
 
 # Wine
 set -gx WINEARCH win64
-set -gx WINEPREFIX ~/.wine/default
-set -gx PROTONPREFIX ~/.proton/default
+set -gx WINEPREFIX ~/.local/share/wine/default
 
 # ccache
 set -gx CCACHE_DIR ~/.ccache
