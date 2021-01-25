@@ -1,7 +1,6 @@
 #!/bin/sh
 
-DIR=$(dirname "$0")
 TEMP=$(mktemp '/tmp/XXXXXXXXX.png')
 
 spectacle --region --background --output $TEMP
-$DIR/imgurbash2 --login $TEMP
+share $TEMP

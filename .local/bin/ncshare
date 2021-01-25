@@ -1,0 +1,56 @@
+#!/bin/sh
+
+# Should contain something like:
+# NCUSER="herp"
+# NCPASS="derp"
+. "$HOME/.config/ncshare"
+
+while getopts ':f:d:' args; do
+	case "$args" in
+		f)
+			FILE="$OPTARG"
+			;;
+		d)
+			DIR="$OPTARG"
+			;;
+		*)
+			;;
+	esac
+done
+
+if [ "$FILE" = "-" ]; then
+	FILE="$(mktemp)"
+	tee "$FILE"
+fi
+
+if [ ! -f "$FILE" ]; then
+	echo "[!] File not found"
+	exit 1
+fi
+
+DATE="$(date '+%Y-%m-%d')"
+TIME="$(date '+%H-%M-%S')"
+NAME="$(basename "$FILE")"
+
+NAME="${DATE}_${TIME}_${NAME}"
+if [ ! "$DIR" = "" ]; then
+	NAME="$DIR/$NAME"
+
+	curl -fs -u "$NCUSER:$NCPASS" -X MKCOL \
+		"https://tmsp.io/nc/remote.php/webdav/Share/$DIR"
+fi
+
+curl -f -u "$NCUSER:$NCPASS" -T "$FILE" \
+	"https://tmsp.io/nc/remote.php/webdav/Share/$NAME"
+
+if [ "$?" = "0" ]; then
+	printf "%s" "https://tmsp.io/sh/$NAME" | xsel -ib
+
+	notify-send -a "Nextcloud Share" -i nextcloud \
+		"Upload complete" \
+		"$FILE was uploaded and a link to it was copied to the clipboard"
+else
+	notify-send -a "Nextcloud Share" -i nextcloud \
+		"Upload failed" \
+		"$FILE could not be uploaded successfully"
+fi

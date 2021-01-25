@@ -1,0 +1,25 @@
+#!/bin/sh
+
+FILE="$1"
+
+if [ "$FILE" = "-" ]; then
+	FILE="$(mktemp)"
+	tee "$FILE"
+fi
+
+if [ ! -f "$FILE" ]; then
+	echo "[!] File not found"
+	exit 1
+fi
+
+case "$FILE" in
+	*.png | *.jpg | *.jpeg)
+		ncshare -d img -f "$FILE"
+		;;
+	*.txt | *.md | *.log)
+		ncshare -d txt -f "$FILE"
+		;;
+	*)
+		ncshare -d etc -f "$FILE"
+		;;
+esac
