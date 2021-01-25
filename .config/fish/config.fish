@@ -40,7 +40,6 @@ set -gx RPM_BUILD_NCPUS 12
 set -e PATH
 
 set -gx -a PATH ~/.local/bin
-set -gx -a PATH ~/.config/emacs/bin
 set -gx -a PATH ~/.local/share/go/bin
 set -gx -a PATH ~/.local/share/flatpak/exports/bin
 set -gx -a PATH /var/lib/flatpak/exports/bin

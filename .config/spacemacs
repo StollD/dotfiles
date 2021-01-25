@@ -1,0 +1,82 @@
+;; -*- mode: emacs-list; lexical-binding: t -*-
+
+;; This file is designed to be plugged into an unchanged ~/.spacemacs file
+;; This allows you to only set the options you actually want to change,
+;; and use the default values for everything else.
+;;
+;; Add (load "~/.config/spacemacs") to the end of ~/.spacemacs to enable
+;; the options from this file. If you want to load emacs with the defaults,
+;; just comment out loading this file.
+
+(defun dotspacemacs/user-layers ()
+       (setq-default dotspacemacs-configuration-layers '(
+		auto-completion
+		cscope
+		emacs-lisp
+		git
+		helm
+		helpful
+		lsp
+		semantic
+		syntax-checking
+		version-control
+		tabs
+		themes-megapack
+
+		(treemacs :variables
+			treemacs-use-git-mode 'deferred)
+
+		(c-c++ :variables
+		       c-c++-enable-clang-support t
+		       c-c++-backend 'lsp-clangd
+		       c-c++-enable-clang-format-on-save t
+		       c-c++-adopt-subprojects t)
+
+		(csharp :variables
+			csharp-backend 'lsp)
+
+		(go :variables
+			go-backend 'lsp
+			go-format-before-save t
+			go-tab-width nil)
+
+		(java :variables
+		      java-backend 'lsp)
+
+		json
+		markdown
+		meson
+		shell-scripts
+		systemd
+		yaml))
+)
+
+(advice-add 'dotspacemacs/layers :after #'dotspacemacs/user-layers)
+
+(defun dotspacemacs/user-init ()
+	(setq-default
+		dotspacemacs-scratch-buffer-persistent t
+		dotspacemacs-themes '(doom-vibrant)
+		dotspacemacs-loading-progress-bar nil
+		dotspacemacs-enable-server t
+		dotspacemacs-persistent-server t
+		dotspacemacs-line-numbers t)
+
+	(setq-default warning-suppress-types '((comp)))
+	(setq-default show-trailing-whitespace t)
+	(setq-default indent-tabs-mode t)
+
+	(require 'whitespace)
+	(setq whitespace-style '(
+		face
+		trailing
+		tabs
+		spaces
+		empty
+		indentation
+		space-after-tab
+		space-before-tab))
+
+	(global-whitespace-mode t)
+	(global-display-fill-column-indicator-mode t)
+)
