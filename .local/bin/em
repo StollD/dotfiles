@@ -1,9 +1,11 @@
 #!/bin/sh
 
-emacsclient -n -e "(if (> (length (frame-list)) 1) 't)" | grep -q t
+#emacsclient -n -e "(if (> (length (frame-list)) 1) 't)" | grep -q t
 
-if [ "$?" = "1" ]; then
-    emacsclient -c "$@"
-else
-    emacsclient "$@"
-fi
+#if [ "$?" = "1" ]; then
+#    emacsclient -c "$@"
+#else
+#    emacsclient "$@"
+#fi
+
+(nohup emacsclient -a emacs "$@" 2>&1 > /dev/null) > /dev/null

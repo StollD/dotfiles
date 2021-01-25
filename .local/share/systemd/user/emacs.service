@@ -1,8 +1,0 @@
-[Unit]
-Description=Emacs: the extensible, self-documenting text editor
-
-[Service]
-ExecStart=%h/.local/bin/tb/emacs --fg-daemon
-
-[Install]
-WantedBy=default.target
