@@ -5,10 +5,8 @@ yadm remote set-url origin "git@github.com:StollD/dotfiles.git"
 
 cd "$HOME"
 
+git clone https://github.com/syl20bnr/spacemacs ~/.config/emacs
+
 echo "Installing spicetify"
 spicetify-update
 systemctl --user enable --now spicetify-update.timer
-
-echo "Installing proton"
-proton-update
-systemctl --user enable --now proton-update.timer
