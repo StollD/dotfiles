@@ -12,6 +12,7 @@
        (setq-default dotspacemacs-configuration-layers '(
 		auto-completion
 		cscope
+		dap
 		emacs-lisp
 		git
 		helm
