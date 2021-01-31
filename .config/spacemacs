@@ -9,7 +9,7 @@
 ;; just comment out loading this file.
 
 (defun dotspacemacs/user-layers ()
-       (setq-default dotspacemacs-configuration-layers '(
+	(setq-default dotspacemacs-configuration-layers '(
 		auto-completion
 		cscope
 		dap
@@ -28,10 +28,10 @@
 			treemacs-use-git-mode 'deferred)
 
 		(c-c++ :variables
-		       c-c++-enable-clang-support t
-		       c-c++-backend 'lsp-clangd
-		       c-c++-enable-clang-format-on-save t
-		       c-c++-adopt-subprojects t)
+			c-c++-enable-clang-support t
+			c-c++-backend 'lsp-clangd
+			c-c++-enable-clang-format-on-save t
+			c-c++-adopt-subprojects t)
 
 		(csharp :variables
 			csharp-backend 'lsp)
@@ -42,7 +42,7 @@
 			go-tab-width nil)
 
 		(java :variables
-		      java-backend 'lsp)
+			java-backend 'lsp)
 
 		json
 		markdown
@@ -57,11 +57,16 @@
 (defun dotspacemacs/user-init ()
 	(setq-default
 		dotspacemacs-scratch-buffer-persistent t
-		dotspacemacs-themes '(doom-vibrant)
+		dotspacemacs-themes '(doom-Iosvkem)
 		dotspacemacs-loading-progress-bar nil
 		dotspacemacs-enable-server t
 		dotspacemacs-persistent-server t
 		dotspacemacs-line-numbers t)
+
+	(setq-default
+		doom-Iosvkem-brighter-comments t
+		doom-Iosvkem-comment-bg t
+		doom-Iosvkem-padded-modeline t)
 
 	(setq-default warning-suppress-types '((comp)))
 	(setq-default show-trailing-whitespace t)
@@ -71,8 +76,6 @@
 	(setq whitespace-style '(
 		face
 		trailing
-		tabs
-		spaces
 		empty
 		indentation
 		space-after-tab
