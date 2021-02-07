@@ -1,9 +1,0 @@
-[Unit]
-Description=Spicetify Updater
-
-[Timer]
-OnCalendar=daily
-Persistent=true
-
-[Install]
-WantedBy=default.target
