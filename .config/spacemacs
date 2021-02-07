@@ -50,6 +50,8 @@
 		shell-scripts
 		systemd
 		yaml))
+
+	(setq-default dotspacemacs-additional-packages '(v-mode))
 )
 
 (advice-add 'dotspacemacs/layers :after #'dotspacemacs/user-layers)
@@ -83,4 +85,5 @@
 
 	(global-whitespace-mode t)
 	(global-display-fill-column-indicator-mode t)
+	(add-to-list 'auto-mode-alist '("\\.v\\'" . v-mode))
 )
