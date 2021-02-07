@@ -40,10 +40,8 @@ function fish_prompt
 	end
 
 	# Toolbox
-	if [ (hostname) = "toolbox" ]
-		set_color brred
-		printf '⬢ '
-		set_color normal
+	if [ ! (tb current) = "" ]
+		printf '[%s] ' (tb current)
 	end
 
 	# PWD

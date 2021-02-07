@@ -59,8 +59,11 @@ if [ -d ~/.local/share/ndk ]
 end
 
 # Toolbox
-if [ "$SILVERBLUE" -a ! (hostname) = "toolbox" ]
-	set -gx -p PATH ~/.local/bin/tb
+set -gx -p PATH ~/.local/share/tbtools/instances
+if [ ! (tb current) = "" ]
+    set -gx -p PATH ~/.local/share/tbtools/imports
+else
+    set -gx -p PATH ~/.local/share/tbtools/exports
 end
 
 # Reset and refill data dirs
