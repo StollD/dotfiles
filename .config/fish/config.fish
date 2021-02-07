@@ -80,10 +80,10 @@ set -gx --path -a XDG_DATA_DIRS /usr/share
 git config --global user.name 'Dorian Stoll'
 git config --global user.email 'dorian.stoll@tmsp.io'
 git config --global user.signingkey 'dorian.stoll@tmsp.io'
-git config --global user.github 'StollD'
 git config --global commit.gpgsign true
 git config --global tag.forcesignannotated true
 git config --global core.editor $EDITOR
+git config --global init.defaultBranch 'main'
 
 #
 # Fish configuration
