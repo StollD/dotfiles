@@ -1,9 +1,0 @@
-#!/bin/sh
-
-PROG="$0"
-if [ "$(basename "$PROG")" = "tb-sudorun" ]; then
-	PROG="$1"
-	shift
-fi
-
-exec tb-run sudo "$(basename "$PROG")" "$@"
