@@ -12,16 +12,6 @@ set -gx VISUAL e
 set -gx EDITOR em
 set -gx SUDO_EDITOR em
 
-switch $XDG_CURRENT_DESKTOP
-case GNOME
-	set -gx QT_QPA_PLATFORMTHEME qt5ct
-case KDE
-	set -gx QT_QPA_PLATFORMTHEME kde
-	set -gx GTK_USE_PORTAL 1
-end
-
-set -gx QT_AUTO_SCREEN_SCALE_FACTOR 1
-
 # Wine
 set -gx WINEARCH win64
 set -gx WINEPREFIX ~/.local/share/wine/default
@@ -33,14 +23,11 @@ set -gx CCACHE_MAXSIZE 100G
 
 # Misc stuff
 set -gx GOPATH ~/.local/share/go
-set -gx MOZ_X11_EGL 1
-set -gx RPM_BUILD_NCPUS 12
 
 # Reset and refill PATH
 set -e PATH
 
 set -gx -a PATH ~/.local/bin
-set -gx -a PATH ~/.local/share/v
 set -gx -a PATH ~/.local/share/go/bin
 set -gx -a PATH ~/.local/share/flatpak/exports/bin
 set -gx -a PATH /var/lib/flatpak/exports/bin
@@ -55,7 +42,7 @@ set -gx -a PATH /usr/sbin
 # These needs to be added last, so that the android
 # clang doesnt override the system clang
 if [ -d ~/.local/share/ndk ]
-	set -gx -a PATH ~/.local/share/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin
+    set -gx -a PATH ~/.local/share/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin
 end
 
 # Toolbox
