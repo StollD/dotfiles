@@ -44,7 +44,13 @@ curl -f -u "$NCUSER:$NCPASS" -T "$FILE" \
 	"https://tmsp.io/nc/remote.php/webdav/Share/$NAME"
 
 if [ "$?" = "0" ]; then
-	printf "%s" "https://tmsp.io/sh/$NAME" | xsel -ib
+	LINK="https://tmsp.io/sh/$NAME"
+
+	if [ ! -z "$WAYLAND_DISPLAY" ]; then
+		wl-copy "$LINK"
+	else
+		printf "%s" "$LINK" | xsel -ib
+	fi
 
 	notify-send -a "Nextcloud Share" -i nextcloud \
 		"Upload complete" \
