@@ -19,6 +19,9 @@ case "$FILE" in
 	*.txt | *.md | *.log)
 		ncshare -d txt -f "$FILE"
 		;;
+	*.webm | *.mp4)
+		ncshare -d vid -f "$FILE"
+		;;
 	*)
 		ncshare -d etc -f "$FILE"
 		;;
