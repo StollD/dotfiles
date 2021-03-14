@@ -1,4 +1,4 @@
-;; -*- mode: emacs-list; lexical-binding: t -*-
+;; -*- mode: emacs-lisp; lexical-binding: t -*-
 
 ;; This file is designed to be plugged into an unchanged ~/.spacemacs file
 ;; This allows you to only set the options you actually want to change,
@@ -11,47 +11,36 @@
 (defun dotspacemacs/user-layers ()
 	(setq-default dotspacemacs-configuration-layers '(
 		auto-completion
-		cscope
 		dap
-		emacs-lisp
 		git
-		helm
-		helpful
+		ivy
 		lsp
-		semantic
 		syntax-checking
-		version-control
 		tabs
 		themes-megapack
+		version-control
 
 		(treemacs :variables
-			treemacs-use-git-mode 'deferred)
+			treemacs-use-git-mode 'extended)
 
 		(c-c++ :variables
 			c-c++-enable-clang-support t
-			c-c++-backend 'lsp-clangd
+			c-c++-backend 'lsp-ccls
 			c-c++-enable-clang-format-on-save t
 			c-c++-adopt-subprojects t)
-
-		(csharp :variables
-			csharp-backend 'lsp)
 
 		(go :variables
 			go-backend 'lsp
 			go-format-before-save t
 			go-tab-width nil)
 
-		(java :variables
-			java-backend 'lsp)
-
+		emacs-lisp
 		json
 		markdown
 		meson
 		shell-scripts
 		systemd
 		yaml))
-
-	(setq-default dotspacemacs-additional-packages '(v-mode))
 )
 
 (advice-add 'dotspacemacs/layers :after #'dotspacemacs/user-layers)
@@ -60,6 +49,7 @@
 	(setq-default
 		dotspacemacs-scratch-buffer-persistent t
 		dotspacemacs-themes '(doom-Iosvkem)
+		dotspacemacs-mode-line-theme '(all-the-icons :separator arrow)
 		dotspacemacs-loading-progress-bar nil
 		dotspacemacs-enable-server t
 		dotspacemacs-persistent-server t
@@ -72,18 +62,23 @@
 
 	(setq-default warning-suppress-types '((comp)))
 	(setq-default show-trailing-whitespace t)
-	(setq-default indent-tabs-mode t)
 
 	(require 'whitespace)
 	(setq whitespace-style '(
 		face
-		trailing
 		empty
 		indentation
+		lines-tail
 		space-after-tab
-		space-before-tab))
+		space-before-tab
+		trailing))
 
 	(global-whitespace-mode t)
 	(global-display-fill-column-indicator-mode t)
-	(add-to-list 'auto-mode-alist '("\\.v\\'" . v-mode))
 )
+
+;; Read the maximum line length for whitespace mode from editorconfig
+(defun editorconfig-whitespace (length)
+	(setq whitespace-line-column fill-column))
+
+(advice-add 'editorconfig-set-line-length :after #'editorconfig-whitespace)
