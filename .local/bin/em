@@ -22,14 +22,22 @@ FRAMES="$(emacsclient -e '(length (frame-list))')"
 
 _eclient() {
 	if [ "$NB" = "" ]; then
-		emacsclient "$@"
+		if [ "$FRAMES" -gt 1 ]; then
+			emacsclient "$@"
+		else
+			emacsclient -c "$@"
+		fi
 	else
-		emacsclient -n "$@"
+		if [ "$FRAMES" -gt 1 ]; then
+			emacsclient -n "$@"
+		else
+			emacsclient -nc "$@"
+		fi
 	fi
 }
 
-if [ "$FRAMES" -gt "1" ]; then
+if [ ! "$FILE" = "" ]; then
 	_eclient "$FILE"
 else
-	_eclient -c "$FILE"
+	_eclient
 fi
