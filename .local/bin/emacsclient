@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec flatpak run --command=emacsclient org.gnu.emacs -s /tmp/emacs/server "$@"

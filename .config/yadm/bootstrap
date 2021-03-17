@@ -4,6 +4,4 @@ echo "Updating the yadm repo origin URL"
 yadm remote set-url origin "git@github.com:StollD/dotfiles.git"
 
 git clone https://github.com/syl20bnr/spacemacs ~/.config/emacs
-git clone https://github.com/vlang/v ~/.local/share/v
-
-~/.local/share/v/v self
+ln -s ~/.config/emacs ~/.emacs.d

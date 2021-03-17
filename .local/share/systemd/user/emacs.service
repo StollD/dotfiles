@@ -1,0 +1,12 @@
+[Unit]
+Description=Emacs text editor
+Documentation=info:emacs man:emacs(1) https://gnu.org/software/emacs/
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/flatpak run org.gnu.emacs --fg-daemon
+ExecStop=/usr/bin/flatpak run --command=emacsclient org.gnu.emacs -e "(kill-emacs)" -s /tmp/emacs/server
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

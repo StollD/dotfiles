@@ -1,11 +1,35 @@
 #!/bin/sh
 
-#emacsclient -n -e "(if (> (length (frame-list)) 1) 't)" | grep -q t
+TRAMP="/tb::"
 
-#if [ "$?" = "1" ]; then
-#    emacsclient -c "$@"
-#else
-#    emacsclient "$@"
-#fi
+while getopts ":nt" args; do
+	case "$args" in
+	n)
+		NB="1"
+		;;
+	t)
+		NT="1"
+		;;
+	esac
+done
+shift $((OPTIND-1))
 
-(nohup emacsclient -a emacs "$@" 2>&1 > /dev/null) > /dev/null
+FILE="$1"
+if [ ! "$FILE" = "" ] && [ "$NT" = "" ]; then
+	FILE="$TRAMP$(readlink -f "$FILE")"
+fi
+FRAMES="$(emacsclient -e '(length (frame-list))')"
+
+_eclient() {
+	if [ "$NB" = "" ]; then
+		emacsclient "$@"
+	else
+		emacsclient -n "$@"
+	fi
+}
+
+if [ "$FRAMES" -gt "1" ]; then
+	_eclient "$FILE"
+else
+	_eclient -c "$FILE"
+fi

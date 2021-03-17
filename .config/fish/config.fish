@@ -4,13 +4,9 @@
 # Environment configuration
 #
 
-if grep -q Silverblue /etc/os-release
-	set -gx SILVERBLUE true
-end
-
-set -gx VISUAL e
-set -gx EDITOR em
-set -gx SUDO_EDITOR em
+set -gx VISUAL ~/.local/bin/e
+set -gx EDITOR ~/.local/bin/em
+set -gx SUDO_EDITOR ~/.local/bin/em
 
 # Wine
 set -gx WINEARCH win64
@@ -26,6 +22,11 @@ set -gx GOPATH ~/.local/share/go
 
 # Reset and refill PATH
 set -e PATH
+
+# Toolbox
+if [ ! "$TOOLBOX_PATH" = "" ]
+    set -gx -a PATH ~/.local/bin/toolbox
+end
 
 set -gx -a PATH ~/.local/bin
 set -gx -a PATH ~/.local/share/go/bin
@@ -43,14 +44,6 @@ set -gx -a PATH /usr/sbin
 # clang doesnt override the system clang
 if [ -d ~/.local/share/ndk ]
     set -gx -a PATH ~/.local/share/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin
-end
-
-# Toolbox
-set -gx -p PATH ~/.local/share/tbtools/instances
-if [ ! (tb current) = "" ]
-    set -gx -p PATH ~/.local/share/tbtools/imports
-else
-    set -gx -p PATH ~/.local/share/tbtools/exports
 end
 
 # Reset and refill data dirs

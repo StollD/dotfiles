@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# Dont need modularity
+sudo rpm -e fedora-repos-modular
+
+sudo dnf config-manager --set-enabled updates-testing
+sudo dnf config-manager --set-disabled fedora-cisco-openh264
+
+# Enable rpmfusion-free
+sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf config-manager --set-enabled rpmfusion-free-updates-testing
+
+# Enable all languages in the toolbox
+sudo rm /etc/rpm/macros.image-language-conf
+
+# Reinstall everything to get all languages
+sudo dnf reinstall -y \*
+sudo dnf distro-sync -y
+
+sudo dnf install -y \
+     @rpm-development-tools \
+     @c-development \
+     glibc-all-langpacks \
+     meson \
+     cmake \
+     make \
+     gcc \
+     gcc-g++ \
+     clang \
+     clang-tools-extra \
+     ccls \
+     rpkg \
+     htop \
+     xdg-utils \
+     ffmpeg \
+     fish \
+     lldb \
+     gdb
