@@ -6,7 +6,7 @@
 (load "~/.config/emacs/core/templates/.spacemacs.template")
 
 ;; Load user functions from ~/.config/spacemacs (XDG, yay)
-(load "~/.config/spacemacs")
+(load "~/.config/spacemacs/init.el")
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
