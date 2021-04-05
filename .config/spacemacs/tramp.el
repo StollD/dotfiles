@@ -16,7 +16,7 @@
 		"flatpak-spawn --host sh -c 'echo -n fedora-toolbox-$(rpm -E %fedora)'")
 )
 
-(defun toolbox/add-method ()
+(defun toolbox/register ()
 	(add-to-list 'tramp-methods `("tb"
 		(tramp-login-program "flatpak-spawn")
 		(tramp-login-args (("--host") ("toolbox")
@@ -29,4 +29,8 @@
 	(add-to-list 'tramp-default-host-alist `("tb" nil ,(toolbox/default)))
 )
 
-(with-eval-after-load 'tramp (toolbox/add-method))
+(defun tramp/user-setup ()
+	(toolbox/register)
+)
+
+(with-eval-after-load 'tramp (tramp/user-setup))

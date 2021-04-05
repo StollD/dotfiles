@@ -1,6 +1,6 @@
 ;; -*- mode: emacs-lisp; lexical-binding: t -*-
 
-(defun org/setup ()
+(defun org/user-setup ()
 	(org-indent-mode)
 	(visual-line-mode)
 
@@ -41,4 +41,4 @@
 	(setq whitespace-global-modes '(not org-mode))
 )
 
-(with-eval-after-load 'org (add-hook 'org-mode-hook #'org/setup))
+(with-eval-after-load 'org (add-hook 'org-mode-hook #'org/user-setup))
