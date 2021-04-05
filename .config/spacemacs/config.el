@@ -36,9 +36,7 @@
 		systemd
 		yaml))
 
-	(setq-default dotspacemacs-additional-packages '(
-		(tramp :location elpa)
-		olivetti))
+	(setq-default dotspacemacs-additional-packages '(olivetti))
 )
 
 (advice-add 'dotspacemacs/layers :after #'dotspacemacs/user-layers)
@@ -55,18 +53,6 @@
 		doom-Iosvkem-comment-bg t
 		doom-Iosvkem-padded-modeline t)
 
+	;; Use a directory that will be accessible in toolbox and flatpak
 	(setq server-socket-dir "/tmp/emacs")
-
-	(require 'whitespace)
-	(setq whitespace-style '(
-		face
-		empty
-		indentation
-		lines-tail
-		space-after-tab
-		space-before-tab
-		trailing))
-
-	(global-whitespace-mode t)
-	(global-display-fill-column-indicator-mode t)
 )

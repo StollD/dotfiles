@@ -8,8 +8,8 @@
 			:server-id 'ccls-remote
 			:multi-root nil
 			:notification-handlers (lsp-ht
-						       ("$ccls/publishSkippedRanges" #'ccls--publish-skipped-ranges)
-						       ("$ccls/publishSemanticHighlight" #'ccls--publish-semantic-highlight))
+				("$ccls/publishSkippedRanges" #'ccls--publish-skipped-ranges)
+				("$ccls/publishSemanticHighlight" #'ccls--publish-semantic-highlight))
 			:initialization-options (lambda () ccls-initialization-options)
 			:library-folders-fn ccls-library-folders-fn
 			:remote? t))
