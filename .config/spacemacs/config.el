@@ -37,6 +37,7 @@
 		yaml))
 
 	(setq-default dotspacemacs-additional-packages '(olivetti))
+	(setq-default dotspacemacs-excluded-packages '(git-gutter+))
 )
 
 (advice-add 'dotspacemacs/layers :after #'dotspacemacs/user-layers)
