@@ -1,11 +1,10 @@
 #!/bin/sh
 
 exec flatpak-spawn \
-     --host \
-     --watch-bus \
-     --forward-fd=1 \
-     --forward-fd=2 \
-     --env=TERM="$TERM" \
-     --env=DISPLAY="$DISPLAY" \
-     --directory="$(pwd)" \
-     "$@"
+	--host \
+	--watch-bus \
+	--forward-fd=1 \
+	--forward-fd=2 \
+	--env=TERM="$TERM" \
+	--env=DISPLAY="$DISPLAY" \
+	--directory="$PWD" "$@"

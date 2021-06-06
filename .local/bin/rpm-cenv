@@ -4,11 +4,16 @@ if [ "$TC" = "" ]; then
 	TC=$(rpmbuild --eval '%toolchain')
 fi
 
-export CC="$(rpmbuild -D "toolchain $TC" --eval '%__cc')"
-export CXX="$(rpmbuild -D "toolchain $TC" --eval '%__cxx')"
-export CFLAGS="$(rpmbuild -D "toolchain $TC" --eval '%build_cflags' | sed 's|-mtune=generic||g')"
-export CXXFLAGS="$(rpmbuild -D "toolchain $TC" --eval '%build_cxxflags')"
-export LDFLAGS="$(rpmbuild -D "toolchain $TC" --eval '%build_ldflags')"
+CC="$(rpmbuild -D "toolchain $TC" --eval '%__cc')"
+CXX="$(rpmbuild -D "toolchain $TC" --eval '%__cxx')"
+CFLAGS="$(rpmbuild -D "toolchain $TC" --eval '%build_cflags')"
+CXXFLAGS="$(rpmbuild -D "toolchain $TC" --eval '%build_cxxflags')"
+LDFLAGS="$(rpmbuild -D "toolchain $TC" --eval '%build_ldflags')"
 
-exec $@
+export CC
+export CXX
+export CFLAGS
+export CXXFLAGS
+export LDFLAGS
 
+exec "$@"

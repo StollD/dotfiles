@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TEMP=$(mktemp '/tmp/XXXXXXXXX.png')
+TEMP="$(mktemp '/tmp/XXXXXXXXX.png')"
 
-spectacle --region --background --output $TEMP
-share $TEMP
+spectacle --region --background --output "$TEMP"
+share "$TEMP"

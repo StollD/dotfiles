@@ -7,7 +7,7 @@ sudo dnf config-manager --set-enabled updates-testing
 sudo dnf config-manager --set-disabled fedora-cisco-openh264
 
 # Enable rpmfusion-free
-sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
 sudo dnf config-manager --set-enabled rpmfusion-free-updates-testing
 
 # Enable all languages in the toolbox
@@ -17,10 +17,29 @@ sudo rm /etc/rpm/macros.image-language-conf
 sudo dnf reinstall -y \*
 sudo dnf distro-sync -y
 
+sudo mkdir /opt/vscode-server
+sudo chmod 777 /opt/vscode-server
+
+sudo ln -s /opt/vscode-server /.vscode-server
+sudo ln -s /opt/vscode-server /root/.vscode-server
+
+if [ ! -e "$HOME/.vscode-server" ]; then
+	ln -s /opt/vscode-server "$HOME/.vscode-server"
+fi
+
+## Uni Stuff
 sudo dnf install -y \
-     @rpm-development-tools \
+	python3-notebook \
+	python-language-server \
+	python3-numpydoc \
+	python3-seaborn \
+	python3-scikit-learn \
+	python3-scikit-image \
+	python3-nltk
+
+## C / C++
+sudo dnf install -y \
      @c-development \
-     glibc-all-langpacks \
      meson \
      cmake \
      make \
@@ -29,10 +48,31 @@ sudo dnf install -y \
      clang \
      clang-tools-extra \
      ccls \
-     rpkg \
-     htop \
-     xdg-utils \
-     ffmpeg \
-     fish \
      lldb \
      gdb
+
+## RPM
+sudo dnf install -y \
+	@rpm-development-tools \
+	rpkg
+
+## Random
+sudo dnf install -y \
+	glibc-all-langpacks \
+	htop \
+	xdg-utils \
+	ffmpeg \
+	fish \
+	openssl-devel \
+	alsa-lib-devel
+
+## Rust
+sudo dnf install -y \
+	rust \
+	cargo \
+	rustfmt \
+	rust-src
+
+## Qt / QML
+sudo dnf install -y \
+	qt5-qtquick\*

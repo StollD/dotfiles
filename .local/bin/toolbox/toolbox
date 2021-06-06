@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec host-runner "toolbox" "$@"
+exec "$(dirname "$0")"/host-runner "toolbox" "$@"

@@ -21,6 +21,9 @@ while getopts ":ho:" args; do
 	h)
 		usage
 		;;
+	*)
+		usage
+		;;
 	esac
 done
 
@@ -31,11 +34,11 @@ for file in "$@"; do
 	if [ ! -f "$file" ]; then
 		continue
 	fi
-	echo $file
-	echo "file '$(readlink -f $file)'" >> $TEMP
+	echo "$file"
+	echo "file '$(readlink -f "$file")'" >> "$TEMP"
 	if [ "$O" = "" ]; then
-		FILENAME="$FILENAME-$(basename $file)"
+		FILENAME="$FILENAME-$(basename "$file")"
 	fi
 done
 
-ffmpeg -f concat -safe 0 -i $TEMP -c copy $FILENAME
+ffmpeg -f concat -safe 0 -i "$TEMP" -c copy "$FILENAME"

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec host-runner "rpm-ostree" "$@"
+exec "$(dirname "$0")"/host-runner "rpm-ostree" "$@"

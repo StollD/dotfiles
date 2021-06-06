@@ -46,7 +46,7 @@ curl -f -u "$NCUSER:$NCPASS" -T "$FILE" \
 if [ "$?" = "0" ]; then
 	LINK="https://tmsp.io/sh/$NAME"
 
-	if [ ! -z "$WAYLAND_DISPLAY" ]; then
+	if [ -n "$WAYLAND_DISPLAY" ]; then
 		wl-copy "$LINK"
 	else
 		printf "%s" "$LINK" | xsel -ib

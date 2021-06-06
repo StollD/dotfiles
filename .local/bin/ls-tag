@@ -2,8 +2,7 @@
 
 KERNEL="$1"
 
-git tag -f debian-$KERNEL
-git tag -f arch-$KERNEL
-git tag -f fedora-32-$KERNEL
-git tag -f fedora-33-$KERNEL
-git tag -f fedora-34-$KERNEL
+git tag -f "debian-$KERNEL"
+git tag -f "arch-$KERNEL"
+git tag -f "fedora-33-$KERNEL"
+git tag -f "fedora-34-$KERNEL"

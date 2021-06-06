@@ -4,7 +4,7 @@
 SPEC="*.spec"
 OPTS="-ba"
 
-SIGN=0
+SIGN="0"
 KEY=""
 
 BUILD=".build"
@@ -24,58 +24,58 @@ usage() {
 }
 
 clean() {
-	rm -rf $BUILD
-	rm -rf $RPMS
+	rm -rf "$BUILD"
+	rm -rf "$RPMS"
 	exit
 }
 
 while getopts ":hcsf:k:" args; do
 	case "$args" in
 	f)
-		SPEC=$OPTARG
+		SPEC="$OPTARG"
 		;;
 	s)
 		SIGN=1
 		;;
 	k)
-		KEY=$OPTARG
+		KEY="$OPTARG"
 		;;
 	c)
 		clean
 		;;
-	h)
+	*)
 		usage
 		;;
 	esac
 done
-shift $((OPTIND-1))
+shift "$((OPTIND-1))"
 
-if [ ! "$@" = "" ]; then
-	OPTS="$@"
+if [ ! "$*" = "" ]; then
+	OPTS=""
 fi
 
 # Check if the specfile exists
-if [ "$(ls -f $SPEC | wc -l)" = "0" ]; then
+if [ "$(find . -name "$SPEC" | wc -l)" = "0" ]; then
 	echo "ERROR: No specfile found. Specify it with the -s option."
-	exit -2
+	exit 2
 fi
 
 # Check if there are too many specfiles
-if [ ! "$(ls -f $SPEC | wc -l)" = "1" ]; then
-	echo "ERROR: Ambiguous matches for specfile. Please specify a single" \
-		"file through the -s option."
-	exit -7
+if [ ! "$(find . -name "$SPEC" | wc -l)" = "1" ]; then
+	echo "ERROR: Ambiguous matches for specfile."
+	echo "Please specify a single file through the -s option."
+	exit 7
 fi
 
 # Get the directory of the specfile
-SPEC=$(ls -f $SPEC)
-DIR=$(readlink -f $(dirname $SPEC))
+SPEC="$(find . -name "$SPEC")"
+DIR="$(readlink -f "$(dirname "$SPEC")")"
 
 if [ ! -d "$DIR/$BUILD" ]; then
 	mkdir "$DIR/$BUILD"
 fi
 
-FILES=$(find $DIR -maxdepth 1);
+FILES="$(find "$DIR" -maxdepth 1)"
 for file in $FILES; do
 	[ "$file" = "$DIR" ] && continue
 	[ "$file" = "$DIR/$BUILD" ] && continue
@@ -94,7 +94,8 @@ spectool                                   \
 	--define "_rpmdir $DIR/$RPMS"      \
 	--define "_specdir $DIR"           \
 	--get-files --all                  \
-	--directory $DIR/$BUILD $SPEC
+	--directory "$DIR/$BUILD"          \
+	"$SPEC"
 
 echo
 
@@ -104,18 +105,18 @@ rpmbuild                                   \
 	--define "_srcrpmdir $DIR/$RPMS"   \
 	--define "_rpmdir $DIR/$RPMS"      \
 	--define "_specdir $DIR"           \
-	$OPTS $SPEC
+	"$OPTS" "$@" "$SPEC"
 
 if [ ! "$SIGN" = "1" ]; then
 	exit
 fi
 
-for file in $(find out/ -name '*.rpm'); do
+find "out/" -name '*.rpm' -print0 | while IFS= read -r file; do
 	echo "Signing $file"
 	if [ "$KEY" = "" ]; then
-		rpm --resign $file 2>&1 > /dev/null
+		rpm --resign "$file" > /dev/null 2>&1
 	else
-		rpm --resign $file --define "_gpg_name $KEY" 2>&1 > /dev/null
+		rpm --resign "$file" --define "_gpg_name $KEY" > /dev/null 2>&1
 	fi
 done
 

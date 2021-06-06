@@ -4,9 +4,9 @@
 # Environment configuration
 #
 
-set -gx VISUAL ~/.local/bin/e
-set -gx EDITOR ~/.local/bin/em
-set -gx SUDO_EDITOR ~/.local/bin/em
+set -gx VISUAL ~/.local/bin/cw
+set -gx EDITOR ~/.local/bin/cw
+set -gx SUDO_EDITOR ~/.local/bin/cw
 
 # Wine
 set -gx WINEARCH win64
